@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">SecurityDetectionAPP</string>
+
+    <string name="connecting_text">正在连接服务器中&#8230;</string>
+    <string name="connected_text">连接成功！</string>
+    <string name="connection_error_text">连接失败！</string>
+
+    <string name="normal">正常</string>
+
+    <string name="history">历史消息</string>
+    <string name="watch">监控</string>
+    <string name="map">地图</string>
+
+    <string name="hint_please_input_password">请输入服务器地址</string>
+    <string name="lab_continue">确认</string>
+    <string name="lab_cancel">取消</string>
+    <string name="known">我已知晓</string>
+    <string name="warning">警告</string>
+</resources>

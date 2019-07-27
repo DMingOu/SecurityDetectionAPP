@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/xui_config_color_black"/>
+    <TextView
+        android:id = "@+id/tv_history_address"
+        android:layout_marginTop="13dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "坐标坐标"/>
+    <TextView
+        android:id="@+id/tv_history_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_history_address"
+        android:layout_marginBottom="13dp"
+        android:textSize="22sp"
+        android:text = "异常---异常----异常"/>
+    <TextView
+        android:id = "@+id/tv_history_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:layout_alignParentRight="true"
+        android:text="时间--时间--时间"
+        />
+    <View
+        android:layout_below="@id/tv_history_msg"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/xui_config_color_black"/>
+
+</RelativeLayout>

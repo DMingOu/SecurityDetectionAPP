@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- 实心 -->
+    <solid android:color="@color/menu_green_normal" />
+    <!-- 边框 -->
+    <stroke
+        android:width="0dp"
+        android:color="@android:color/white"
+        />
+    <!-- 圆角 -->
+    <corners android:radius="10dp" />
+    <!-- 边距 -->
+    <padding
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp" />
+
+    <!-- 设置各边倒角大小 -->
+    <corners
+        android:bottomLeftRadius="0dp"
+        android:bottomRightRadius="0dp"
+        android:topLeftRadius="0dp"
+        android:topRightRadius="0dp" />
+</shape>
+
+<!--<span style="color:#009900;"><span style="background-color: rgb(255, 255, 255);"><?xml version="1.0" encoding="utf-8"?>-->
+    <!--<shape xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:shape="rectangle" >-->
+
+        <!--<gradient-->
+            <!--android:angle="270"-->
+            <!--android:startColor="#19B001"-->
+            <!--android:endColor="#19B001" />-->
+
+        <!--<corners-->
+            <!--android:bottomLeftRadius="@dimen/dp5"-->
+            <!--android:bottomRightRadius="@dimen/dp5"-->
+            <!--android:topLeftRadius="@dimen/dp5"-->
+            <!--android:topRightRadius="@dimen/dp5" />-->
+
+    <!--</shape></span><span style="font-size:10px;">-->
+<!--</span></span>-->

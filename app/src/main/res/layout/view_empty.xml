@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_empty"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/qgbigicon"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id= "@+id/tv_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="没有获取到数据，请尝试检查你的服务器"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:layout_below="@id/iv_empty"/>
+</RelativeLayout>
