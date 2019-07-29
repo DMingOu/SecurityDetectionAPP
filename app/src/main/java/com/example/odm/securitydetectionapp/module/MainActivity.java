@@ -1,6 +1,8 @@
 package com.example.odm.securitydetectionapp.module;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.module.history.ui.historyFragment;
 import com.example.odm.securitydetectionapp.module.home.ui.homeFragment;
 import com.example.odm.securitydetectionapp.module.map_location.ui.locationFragment;
+import com.example.odm.securitydetectionapp.util.StatusBarUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.orhanobut.logger.Logger;
@@ -47,6 +50,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
         initData();
         initEvent();
         view_vp.setCurrentItem(1);
@@ -54,17 +59,20 @@ public class MainActivity extends FragmentActivity {
 
     public void initViews(){
         //此处改变底部导航的动画效果
+
     }
 
     // 添加页面,初始化ViewPager
     private void  initData(){
-        fragmentList = new ArrayList<Fragment>(5);
+        fragmentList = new ArrayList<Fragment>(3);
         fragmentList.add(new historyFragment<>());
         fragmentList.add(new homeFragment<>());
         fragmentList.add(new locationFragment<>());
         vpAdapter = new VpAdapter(getSupportFragmentManager() , fragmentList);
         view_vp.setAdapter(vpAdapter);
         view_bottomNavigation.setupWithViewPager(view_vp);
+        view_bottomNavigation.enableItemShiftingMode(true);
+        view_bottomNavigation.setIconSize(30f,30f);
     }
 
     /**

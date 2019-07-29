@@ -26,6 +26,11 @@ public class capInfo {
     private String data;
     private boolean status;
 
+    public capInfo(String address ,String data ,boolean status) {
+        this.address = address;
+        this.data =data;
+        this.status = status;
+    }
     @Generated(hash = 447490699)
     public capInfo(Long ID, String address, String data, boolean status) {
         this.ID = ID;
@@ -66,7 +71,7 @@ public class capInfo {
     @NonNull
     @Override
     public String toString() {
-        return "子模块:   address:" + address +
+        return "address:" + address +
                 "data: " +  data +
                 "status:  " + status;
     }

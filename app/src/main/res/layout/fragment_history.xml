@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".module.history.ui.historyFragment">
 
 
     <com.wuhenzhizao.titlebar.widget.CommonTitleBar
@@ -12,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         titlebar:fillStatusBar="true"
-        titlebar:statusBarColor = "@color/purple"
-        titlebar:titleBarColor="@color/purple"
+        titlebar:statusBarColor = "#6bb0e3"
+        titlebar:titleBarColor="#6bb0e3"
         titlebar:centerType="textView"
         titlebar:centerText="历史消息"
         titlebar:centerTextColor="@color/xui_config_color_white"
@@ -22,18 +25,28 @@
         titlebar:titleBarHeight="50dp"
         />
 
-    <com.xuexiang.xui.widget.statelayout.MultipleStatusView
-        android:id="@+id/multiple_status_view_history"
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_history"
+        android:layout_below="@id/tb_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible" />
-    <TextView
-        android:layout_centerInParent="true"
-        android:id="@+id/tv_test"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        app:layout_behavior="com.example.wanandroidapp.module.home_pager.ui.ScrollAwareFabBehavior"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="我是加载出来的东西"
-        android:visibility="gone"/>
-
+        android:id="@+id/fb_updown"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="58dp"
+        android:src="@drawable/fb_updown"
+        android:elevation="8dp"
+        android:visibility="invisible"
+        />
 
 </RelativeLayout>

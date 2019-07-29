@@ -31,13 +31,14 @@ public class capInfoAdapter extends BaseQuickAdapter <capInfo, BaseViewHolder> {
         if(item.isStatus()) {
             if("".equals(item.getData())) {
                 helper.setText(R.id.tv_cap_status, "正常");
+                helper.setBackgroundRes(R.id.tv_cap_status ,R.drawable.status_normal );
+                helper.setBackgroundRes(R.id.iv_cap ,R.drawable.head_normal);
             } else {
                 helper.setText(R.id.tv_cap_status,"异常");
                 //异常，将文字背景更换为红色
-                Resources resources= SecurityDetectionAPP.getContext().getResources();
-                Drawable drawable=resources.getDrawable(R.color.red_start);
-                helper.getView(R.id.tv_cap_status).setBackgroundDrawable(drawable);
-                //helper.getView(R.id.tv_cap_status).setBackgroundColor(Color.RED);
+                helper.setBackgroundRes(R.id.tv_cap_status ,R.drawable.status_abnormal);
+                helper.setBackgroundRes(R.id.iv_cap , R.drawable.head_abnormal);
+
             }
             helper.setText(R.id.tv_cap_location ,item.getAddress());
 

@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_history_address"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="3dp"
         android:textSize="22sp"
         android:text = "异常---异常----异常"/>
     <TextView

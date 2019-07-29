@@ -21,7 +21,10 @@ public interface homeContract {
         void addCapInfoList(String capInfoData ,capInfoAdapter adapter);
         void clearAllCapInfo(capInfoAdapter adapter);
          int  checkPosition(String address);
-         //String convertWarningData(String warningData ,int position);
+
+        void switchWebSocket(String  newUrl ,capInfoAdapter adapter);
+
+        //String convertWarningData(String warningData ,int position);
     }
 
     interface View  extends IBaseView {
@@ -34,5 +37,8 @@ public interface homeContract {
         //void toInitWebSocketClient(String  uriString);
         void  checkCapInfo(String  data ,capInfoAdapter adapter);
         void sendCallBack(String msg) ;
+
+        void switchWebSocket(String  newUrl ,capInfoAdapter adapter);
     }
+
 }

@@ -24,13 +24,17 @@ import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseView;
 import com.example.odm.securitydetectionapp.common.Constant;
-import com.example.odm.securitydetectionapp.common.WebSocketUrlManager;
+
 import com.example.odm.securitydetectionapp.common.emptyView;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.home.bean.callBackInfo;
 import com.example.odm.securitydetectionapp.module.home.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.home.contract.homeContract;
 import com.example.odm.securitydetectionapp.module.home.presenter.homePresenter;
+import com.example.odm.securitydetectionapp.util.GsonUtil;
+import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
+import com.example.odm.securitydetectionapp.util.TimeUtil;
+import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
@@ -74,34 +78,59 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
 
     private capInfoAdapter mAdapter;
     private List<capInfo> mCapList;
-    private XUIListPopup mListPopup;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Logger.d("onCreate");
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, view);
-
+        Logger.d("onCreateView");
         initViews();
-        initToolbar();
-        for(int i = 0 ; i < 10 ; i++) {
-            getPresenter().checkCapInfo( "{\"address\":\"02A6\",\"data\":\"gas\",\"status\":true}" , getAdapter() );
-            getPresenter().checkCapInfo("{\"address\":\"01A6\",\"data\":\"\",\"status\":true}" , getAdapter() );
-            getPresenter().checkCapInfo("{\"address\":\"03A6\",\"data\":\"666\",\"status\":true}" , getAdapter() );
-            getPresenter().checkCapInfo("{\"address\":\"04A6\",\"data\":\"9999\",\"status\":true}" , getAdapter() );
-        }
 
+        for(int i = 0 ; i < 10; i ++) {
+
+            getPresenter().checkCapInfo("{\"address\":\"010A\",\"data\":gas\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"020A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"030A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"040A\",\"data\":334\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"050A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"050A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"060A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"070A\",\"data\":dsadas\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"080A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"090A\",\"data\":asad\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"100A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"110A\",\"data\":sdsa\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"120A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"130A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"140A\",\"data\":das\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"150A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"160A\",\"data\":das\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"170A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"180A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"180A\",\"data\":sad\"\",\"status\":true}" ,getAdapter());
+            getPresenter().checkCapInfo("{\"address\":\"200A\",\"data\":\"\",\"status\":true}" ,getAdapter());
+        }
+        initToolbar();
         return view;
     }
 
 
     public void initViews() {
+
         mCapList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         rv_Module.setLayoutManager(layoutManager);
         mAdapter = new capInfoAdapter(R.layout.item_cap ,mCapList);
         rv_Module.setAdapter(mAdapter);
+        Logger.d("adapter初始化了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
         //子项点击事件
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -120,23 +149,19 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                 String errorData = mAdapter.getData().get(position).getData();
                 //非异常状态不能发送反馈
                 if(! "".equals(errorData)) {
-                    initListPopupIfNeed(mAdapter.getData().get(position).getAddress());
-//                    mListPopup.setAnimStyle(XUIPopup.ANIM_GROW_FROM_CENTER);
-//                    mListPopup.setPreferredDirection(XUIPopup.ANIM_AUTO);
-                    mListPopup.show(view);
+                    showSimpleConfirmDialog(mAdapter.getData().get(position).getAddress());
                 }
                 return false;
             }
         });
         //为Adaper加载空布局
         getAdapter().setEmptyView(new emptyView(getContext() ,null));
-        //加载  loading弹窗
+        //加载布局
         view_Status.setStatus(Status.LOADING);
         //手动点击关闭 "连接失败"弹窗
         view_Status.setOnErrorClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Logger.d("失败弹窗已经收回");
                 view_Status.dismiss();
             }
         });
@@ -168,7 +193,10 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     }
 
 
-    //处理服务器发过来的信息
+    /*
+      *  处理服务器发过来的信息
+     */
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     @Override
     public void handleEvent(BaseEvent baseEvent) {
@@ -180,10 +208,14 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                     case Constant.SUCCESS:
                         view_Status.dismiss();
                         view_Status.setStatus(Status.COMPLETE);
+                        Logger.d("WebSocket连接成功了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
+
                         break;
                     case Constant.FAILURE:
                         view_Status.dismiss();
                         view_Status.setStatus(Status.ERROR);
+                        Logger.d("WebSocket连接失败" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
+                        Logger.d("连接失败的url:" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK));
                         break;
                     default:
                 }
@@ -201,12 +233,19 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                         .setAction(R.string.known, null)
                         .show();
             }
-              Logger.d("收到了" + baseEvent.content);
+
+            //准备将子模块加入列表中
               getPresenter().checkCapInfo(baseEvent.content  , getAdapter() );
             } else {
-                Logger.d("adapter还没初始化");
+                Logger.d("adapter还没初始化"+ "消息为"+ baseEvent.content);
             }
         }
+
+    @Override
+    protected void lazyLoadData() {
+        //需要每次进入页面才加载的内容
+
+    }
 
     @Override
     public capInfoAdapter getAdapter() {
@@ -220,7 +259,7 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
         new MaterialDialog.Builder(getContext())
                 .iconRes(R.mipmap.warning_yellow)
                 .title("提示")
-                .content("当前服务器地址: " + "\n" + WebSocketUrlManager.url + "    确定要切换吗")
+                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "    确定要切换吗")
                 .inputType(
                         InputType.TYPE_CLASS_TEXT
                                 | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
@@ -244,8 +283,11 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         String newUrl = dialog.getInputEditText().getText().toString();
                         Logger.d(newUrl);
-                        //Todo:切换服务器，清空列表
-
+                        if (! "".equals(newUrl)) {
+                            getPresenter().switchWebSocket(newUrl, getAdapter());
+                        } else {
+                            ToastUtil.showShortToastCenter("你输入的服务器地址为空");
+                        }
                     }
                 })
                 .cancelable(true)
@@ -264,23 +306,24 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                 .show();
     }
 
-    private void initListPopupIfNeed(String  callbackAddress) {
-        if (mListPopup == null) {
 
-            String[] listItems = new String[]{
-                    "发送反馈",
-            };
 
-            XUISimpleAdapter adapter = XUISimpleAdapter.create(getContext(), listItems);
-            mListPopup = new XUIListPopup(SecurityDetectionAPP.getContext(), adapter);
-            mListPopup.create(DensityUtils.dp2px(200), DensityUtils.dp2px(150), new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    //此处需要 发送反馈 给服务器
-                    getPresenter().sendCallBack(callbackAddress + "发送反馈");
-                    mListPopup.dismiss();
-                }
-            });
-        }
+    /**
+     * 简单的确认对话框
+     */
+    private void showSimpleConfirmDialog(String address) {
+        new MaterialDialog.Builder(getContext())
+                .content("当前选中模块地址为：" + address)
+                .positiveText("确认发送反馈")
+                .negativeText("取消发送")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        getPresenter().sendCallBack(address);
+                    }
+                })
+                .show();
     }
+
+
 }

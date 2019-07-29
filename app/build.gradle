@@ -11,6 +11,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            abiFilters "armeabi","arm64-v8a"
+        }
     }
     buildTypes {
         release {
@@ -33,6 +37,12 @@ android {
         targetGenDirTests 'src/main/java' //应存储生成的单元测试的基本目录。默认为 src / androidTest / java。
     }
 
+    sourceSets {
+        main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
 }
 
 
@@ -85,4 +95,7 @@ dependencies {
 
     // badge 添加带数字的小红点
     implementation 'q.rorbin:badgeview:1.1.0'
+
+    //进度条
+    implementation 'com.tuyenmonkey:mkloader:1.4.0'
 }

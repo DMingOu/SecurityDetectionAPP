@@ -9,6 +9,9 @@ import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
 import com.example.odm.securitydetectionapp.core.eventbus.EventFactory;
 import com.orhanobut.logger.Logger;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,8 +33,6 @@ public class echoWebSocketListener extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
 
-        webSocket.send("我是客户端1");
-        Logger.d("连接成功！！！");
         BaseEvent baseEvent = EventFactory.getInstance();
         baseEvent.type = Constant.STATUS;
         baseEvent.content = Constant.SUCCESS;
@@ -71,7 +72,6 @@ public class echoWebSocketListener extends WebSocketListener {
     //onFailure:失败时被回调（包括连接失败，发送失败等）
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-        Logger.d("onFailure: " + t.getMessage());
         BaseEvent baseEvent = EventFactory.getInstance();
         baseEvent.type = Constant.STATUS;
         baseEvent.content = Constant.FAILURE;

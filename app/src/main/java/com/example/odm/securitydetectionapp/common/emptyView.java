@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.example.odm.securitydetectionapp.R;
+import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 
 /**
  * @author: ODM
@@ -20,7 +21,7 @@ public class emptyView  extends RelativeLayout {
     public emptyView (Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        View inflate = inflate(getContext(), R.layout.view_empty, this);
+        View inflate = inflate(SecurityDetectionAPP.getContext(), R.layout.view_empty, this);
     }
 
     public emptyView(Context context, AttributeSet attrs, int defStyleAttr) {

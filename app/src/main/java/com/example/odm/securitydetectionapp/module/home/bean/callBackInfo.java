@@ -13,13 +13,16 @@ public class callBackInfo {
      */
 
     private String address;
-    private String command;
+    private String message;
+    private boolean locate;
+    private boolean rescue;
 
-    public callBackInfo(String addres ,String command) {
+    public callBackInfo(boolean locate,boolean rescue,String addres ,String message) {
         this.address = addres;
-        this.command = command;
+        this.locate = locate;
+        this.rescue = rescue;
+        this.message = message;
     }
-    //command 字段 属性规定为 "rescue" "locate"
 
     public String getAddress() {
         return address;
@@ -29,11 +32,27 @@ public class callBackInfo {
         this.address = address;
     }
 
-    public String getCommand() {
-        return command;
+    public String getMessage() {
+        return message;
     }
 
-    public void setCommand(String command) {
-        this.command = command;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isLocate() {
+        return locate;
+    }
+
+    public void setLocate(boolean locate) {
+        this.locate = locate;
+    }
+
+    public boolean isRescue() {
+        return rescue;
+    }
+
+    public void setRescue(boolean rescue) {
+        this.rescue = rescue;
     }
 }

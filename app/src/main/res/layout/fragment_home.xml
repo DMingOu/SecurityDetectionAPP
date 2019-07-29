@@ -14,28 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         titlebar:fillStatusBar="true"
-        titlebar:statusBarColor = "@color/purple"
-        titlebar:titleBarColor="@color/purple"
+        titlebar:statusBarColor = "@color/xui_btn_blue_normal_color"
+        titlebar:titleBarColor="@color/xui_btn_blue_normal_color"
         titlebar:centerType="textView"
-        titlebar:centerText="标题"
+        titlebar:centerText="矿帽安全检测"
         titlebar:centerTextColor="@color/xui_config_color_white"
         titlebar:centerTextMarquee="false"
         titlebar:leftType="imageButton"
         titlebar:leftImageResource="@mipmap/toolbar_home_switch"
         titlebar:titleBarHeight="50dp"
         />
-    <com.xuexiang.xui.widget.actionbar.TitleBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:background="@color/xui_config_color_titlebar"
-        app:tb_immersive="true"
-        app:tb_barHeight="50dp"
-        app:tb_leftImageResource="@drawable/ic_check_circle_white_24dp"
-        app:tb_sideTextPadding="20dp"
-        app:tb_actionPadding="20dp"
-        app:tb_titleText="这是一个Title"
-        android:visibility="gone"/>
 
     <com.xuexiang.xui.widget.popupwindow.status.StatusView
         android:id="@+id/status"
@@ -50,7 +38,8 @@
         android:id="@+id/rv_module"
         android:layout_below="@id/status"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 

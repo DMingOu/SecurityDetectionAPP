@@ -13,14 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigationview"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp" />
 
     <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
         android:id="@+id/bottom_navigationview"
         style="@style/bnve_white_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
+
+        android:layout_marginBottom="-2dp"
         app:itemTextColor="@color/selector_item_primary_color"
         app:menu="@menu/menu_navigation" />
 
