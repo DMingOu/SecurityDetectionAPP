@@ -10,11 +10,17 @@ import com.example.odm.securitydetectionapp.base.view.IBaseView;
  */
 public interface locationContract {
     interface Model extends IBaseModel {
+        boolean  handleCallBack (String  callbackString);
     }
 
     interface View  extends IBaseView {
+        void updateAbnormalList();
     }
 
     interface Presenter extends IBasePresenter {
+
+        void  handleCallBack (String  callbackString);
+
+        void  handleCallBackSuccess();
     }
 }

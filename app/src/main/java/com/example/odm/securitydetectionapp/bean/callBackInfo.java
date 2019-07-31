@@ -1,9 +1,15 @@
-package com.example.odm.securitydetectionapp.module.home.bean;
+package com.example.odm.securitydetectionapp.bean;
+
+import androidx.annotation.NonNull;
+
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * @author: ODM
  * @date: 2019/7/25
  */
+@Entity
 public class callBackInfo {
 
     /**
@@ -22,6 +28,18 @@ public class callBackInfo {
         this.locate = locate;
         this.rescue = rescue;
         this.message = message;
+    }
+
+    @Generated(hash = 1253786788)
+    public callBackInfo(String address, String message, boolean locate, boolean rescue) {
+        this.address = address;
+        this.message = message;
+        this.locate = locate;
+        this.rescue = rescue;
+    }
+
+    @Generated(hash = 1481418400)
+    public callBackInfo() {
     }
 
     public String getAddress() {
@@ -54,5 +72,22 @@ public class callBackInfo {
 
     public void setRescue(boolean rescue) {
         this.rescue = rescue;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return  "地址: " + address +
+                "   locate: " + locate +
+                "   rescue: " + rescue +
+                "   message: " + message;
+    }
+
+    public boolean getLocate() {
+        return this.locate;
+    }
+
+    public boolean getRescue() {
+        return this.rescue;
     }
 }

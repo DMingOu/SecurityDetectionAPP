@@ -1,4 +1,4 @@
-package com.example.odm.securitydetectionapp.module.home.bean;
+package com.example.odm.securitydetectionapp.bean;
 
 import androidx.annotation.NonNull;
 
@@ -71,9 +71,9 @@ public class capInfo {
     @NonNull
     @Override
     public String toString() {
-        return "address:" + address +
-                "data: " +  data +
-                "status:  " + status;
+        return "  address:  " + address +
+                " data:   " +  data +
+                " status:  " + status;
     }
 
     public Long getID() {

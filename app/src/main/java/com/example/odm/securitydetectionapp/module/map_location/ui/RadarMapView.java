@@ -218,8 +218,6 @@ public class RadarMapView extends FrameLayout {
 //                          matrix.setRotate(start,viewSize/2,viewSize/2);
                             matrix.preRotate(direction*start,viewSize/2,viewSize/2);
                             view.invalidate();
-
-
                         }
                     });
                     try {

@@ -88,7 +88,6 @@ public class historyFragment<P extends IBasePresenter> extends BaseView<historyP
 
     @Override
     protected void lazyLoadData() {
-        Logger.d("调用数据库加载历史记录");
         getPresenter().loadHistoryList(mAdapter);
         rv_History.scrollToPosition(mAdapter.getItemCount() - 1 );
         LinearLayoutManager mLayoutManager = (LinearLayoutManager) rv_History.getLayoutManager();

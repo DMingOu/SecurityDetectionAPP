@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         titlebar:fillStatusBar="true"
-        titlebar:statusBarColor = "@color/purple"
-        titlebar:titleBarColor="@color/purple"
+        titlebar:statusBarColor = "#6bb0e3"
+        titlebar:titleBarColor="#6bb0e3"
         titlebar:centerType="textView"
         titlebar:centerText="定位"
         titlebar:centerTextColor="@color/xui_config_color_white"
         titlebar:centerTextMarquee="false"
-        titlebar:leftType="none"
         titlebar:titleBarHeight="50dp"
         />
     <com.tuyenmonkey.mkloader.MKLoader
@@ -24,7 +23,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         app:mk_type="FishSpinner"
-        app:mk_color="@color/purple"
+        app:mk_color="#6bb0e3"
         android:layout_centerInParent="true"
         android:visibility="gone"/>
 
@@ -39,6 +38,23 @@
         android:id="@+id/iv_background_location"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tb_location"/>
+        android:layout_below="@id/tb_location"
+        android:visibility="visible"/>
+
+    <com.example.odm.securitydetectionapp.module.map_location.ui.normalMarkerView
+        android:id= "@+id/view_normal"
+        android:layout_below="@id/tb_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
+
+    <include
+        layout="@layout/menu_location_fab"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        />
 
 </RelativeLayout>

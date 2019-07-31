@@ -14,6 +14,9 @@
     <string name="hint_please_input_password">请输入服务器地址</string>
     <string name="lab_continue">确认</string>
     <string name="lab_cancel">取消</string>
+
+    <string name="lab_switch">切换</string>
+
     <string name="known">我已知晓</string>
     <string name="warning">警告</string>
 </resources>

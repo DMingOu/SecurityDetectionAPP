@@ -1,16 +1,11 @@
 package com.example.odm.securitydetectionapp.module.home.ui;
 
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-
 import androidx.annotation.NonNull;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.odm.securitydetectionapp.R;
-import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
-import com.example.odm.securitydetectionapp.module.home.bean.capInfo;
+import com.example.odm.securitydetectionapp.bean.capInfo;
 
 import java.util.List;
 

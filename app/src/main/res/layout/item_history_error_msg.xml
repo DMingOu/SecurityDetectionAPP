@@ -6,9 +6,10 @@
     android:layout_height="wrap_content">
 
     <View
+        android:layout_below="@id/tv_history_msg"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/xui_config_color_black"/>
+        android:layout_height="2dp"
+        android:background="@drawable/divide"/>
     <TextView
         android:id = "@+id/tv_history_address"
         android:layout_marginTop="13dp"
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_history_address"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="0dp"
         android:textSize="22sp"
         android:text = "异常---异常----异常"/>
     <TextView
@@ -34,7 +35,7 @@
     <View
         android:layout_below="@id/tv_history_msg"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/xui_config_color_black"/>
+        android:layout_height="2dp"
+        android:background="@drawable/divide"/>
 
 </RelativeLayout>

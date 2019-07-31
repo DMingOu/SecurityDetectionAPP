@@ -12,6 +12,7 @@ public class Constant {
     public static final String LOADING = "LOADING";
 
     public static final String CAP = "CAP";
+    public static final String CALLBACK = "CALLBACK";
 
     public static final String  URL = "ws://352521ce.ngrok.io/websocket";
 

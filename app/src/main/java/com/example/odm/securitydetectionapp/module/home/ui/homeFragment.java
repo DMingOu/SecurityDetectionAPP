@@ -6,12 +6,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,31 +14,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.odm.securitydetectionapp.R;
-import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseView;
 import com.example.odm.securitydetectionapp.common.Constant;
 
 import com.example.odm.securitydetectionapp.common.emptyView;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
-import com.example.odm.securitydetectionapp.module.home.bean.callBackInfo;
-import com.example.odm.securitydetectionapp.module.home.bean.capInfo;
+import com.example.odm.securitydetectionapp.bean.callBackInfo;
+import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.home.contract.homeContract;
 import com.example.odm.securitydetectionapp.module.home.presenter.homePresenter;
 import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
-import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
-import com.xuexiang.xui.adapter.simple.XUISimpleAdapter;
-import com.xuexiang.xui.utils.DensityUtils;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
-import com.xuexiang.xui.widget.popupwindow.popup.XUIListPopup;
-import com.xuexiang.xui.widget.popupwindow.popup.XUIPopup;
 import com.xuexiang.xui.widget.popupwindow.status.Status;
 import com.xuexiang.xui.widget.popupwindow.status.StatusView;
 
@@ -53,13 +41,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
  * @author: ODM
@@ -78,11 +63,10 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
 
     private capInfoAdapter mAdapter;
     private List<capInfo> mCapList;
-
+    private boolean  currentVisity;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.d("onCreate");
     }
 
     @Nullable
@@ -90,33 +74,8 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, view);
-        Logger.d("onCreateView");
+        currentVisity = true;
         initViews();
-
-        for(int i = 0 ; i < 10; i ++) {
-
-            getPresenter().checkCapInfo("{\"address\":\"010A\",\"data\":gas\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"020A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"030A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"040A\",\"data\":334\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"050A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"050A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"060A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"070A\",\"data\":dsadas\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"080A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"090A\",\"data\":asad\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"100A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"110A\",\"data\":sdsa\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"120A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"130A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"140A\",\"data\":das\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"150A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"160A\",\"data\":das\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"170A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"180A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"180A\",\"data\":sad\"\",\"status\":true}" ,getAdapter());
-            getPresenter().checkCapInfo("{\"address\":\"200A\",\"data\":\"\",\"status\":true}" ,getAdapter());
-        }
         initToolbar();
         return view;
     }
@@ -130,7 +89,6 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
         rv_Module.setLayoutManager(layoutManager);
         mAdapter = new capInfoAdapter(R.layout.item_cap ,mCapList);
         rv_Module.setAdapter(mAdapter);
-        Logger.d("adapter初始化了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
         //子项点击事件
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -202,49 +160,63 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
         //对 事件类型为 请求状态 处理事件
-        if (baseEvent != null && Constant.STATUS.equals(baseEvent.type)) {
-            if (view_Status != null) {
-                switch (baseEvent.content) {
-                    case Constant.SUCCESS:
-                        view_Status.dismiss();
-                        view_Status.setStatus(Status.COMPLETE);
-                        Logger.d("WebSocket连接成功了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
-
-                        break;
-                    case Constant.FAILURE:
-                        view_Status.dismiss();
-                        view_Status.setStatus(Status.ERROR);
-                        Logger.d("WebSocket连接失败" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
-                        Logger.d("连接失败的url:" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK));
-                        break;
-                    default:
+        //若当前页面为隐藏页面，则不接收服务器发来的信息
+        if (currentVisity) {
+            if (baseEvent != null && Constant.STATUS.equals(baseEvent.type)) {
+                if (view_Status != null) {
+                    switch (baseEvent.content) {
+                        case Constant.SUCCESS:
+                            view_Status.dismiss();
+                            view_Status.setStatus(Status.COMPLETE);
+                            Logger.d("WebSocket连接成功了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
+                            break;
+                        case Constant.FAILURE:
+                            view_Status.dismiss();
+                            view_Status.setStatus(Status.ERROR);
+                            Logger.d("WebSocket连接失败" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
+                            Logger.d("连接失败的url:" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK));
+                            break;
+                        default:
+                    }
                 }
             }
-        }
-        if (baseEvent != null && Constant.CAP.equals(baseEvent.type) && getAdapter()!= null) {
-            //子模块信息到了，要进行处理，把它加入列表里面
-            if(baseEvent.content.startsWith("嵌")) {
+            if (baseEvent != null && Constant.CAP.equals(baseEvent.type) && getAdapter() != null) {
+                //子模块信息到了，要进行处理，把它加入列表里面
+                if (baseEvent.content.startsWith("嵌")) {
 
-                CookieBar.builder(getActivity())
-                        .setTitle("嵌入式设备已下线")
-                        .setIcon(R.mipmap.warning_yellow)
-                        .setMessage("子模块信息初始化")
-                        .setLayoutGravity(Gravity.BOTTOM)
-                        .setAction(R.string.known, null)
-                        .show();
-            }
+                    CookieBar.builder(getActivity())
+                            .setTitle("嵌入式设备已下线")
+                            .setIcon(R.mipmap.warning_yellow)
+                            .setMessage("子模块信息初始化")
+                            .setLayoutGravity(Gravity.BOTTOM)
+                            .setAction(R.string.known, null)
+                            .show();
+                }
 
-            //准备将子模块加入列表中
-              getPresenter().checkCapInfo(baseEvent.content  , getAdapter() );
+                //准备将子模块加入列表中
+                getPresenter().checkCapInfo(baseEvent.content, getAdapter());
             } else {
-                Logger.d("adapter还没初始化"+ "消息为"+ baseEvent.content);
+                Logger.d("adapter还没初始化" + "消息为" + baseEvent.content);
             }
         }
+    }
 
     @Override
     protected void lazyLoadData() {
         //需要每次进入页面才加载的内容
 
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            currentVisity = false;
+        } else {
+            // 可视
+            currentVisity = true;
+        }
     }
 
     @Override
@@ -257,13 +229,11 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
      */
     public void showSwitchDialog() {
         new MaterialDialog.Builder(getContext())
-                .iconRes(R.mipmap.warning_yellow)
+                .iconRes(R.drawable.warning_red_round)
                 .title("提示")
-                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "    确定要切换吗")
+                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "\r确定要切换吗")
                 .inputType(
-                        InputType.TYPE_CLASS_TEXT
-                                | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                                | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+                        InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .input(
                         getString(R.string.hint_please_input_password),
                         "",
@@ -275,7 +245,7 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                             }
                         }))
                 //右下角的按钮--确认按钮
-                .positiveText(R.string.lab_continue)
+                .positiveText(R.string.lab_switch)
                 //左下角的按钮--取消按钮
                 .negativeText(R.string.lab_cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -283,10 +253,10 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         String newUrl = dialog.getInputEditText().getText().toString();
                         Logger.d(newUrl);
-                        if (! "".equals(newUrl)) {
+                        if (! "".equals(newUrl) || newUrl.startsWith("w")) {
                             getPresenter().switchWebSocket(newUrl, getAdapter());
                         } else {
-                            ToastUtil.showShortToastCenter("你输入的服务器地址为空");
+                            ToastUtil.showShortToastCenter("你输入的服务器地址不合法");
                         }
                     }
                 })
@@ -297,9 +267,9 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     /**
      * 简单的提示性对话框
      */
-    private void showSimpleTipDialog(String  warnString) {
+    public void showSimpleTipDialog(String  warnString) {
         new MaterialDialog.Builder(getContext())
-                .iconRes(R.mipmap.warning_red)
+                .iconRes(R.mipmap.warning_yellow)
                 .title(R.string.warning)
                 .content(warnString)
                 .positiveText(R.string.known)
@@ -311,7 +281,7 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     /**
      * 简单的确认对话框
      */
-    private void showSimpleConfirmDialog(String address) {
+    public void showSimpleConfirmDialog(String address) {
         new MaterialDialog.Builder(getContext())
                 .content("当前选中模块地址为：" + address)
                 .positiveText("确认发送反馈")

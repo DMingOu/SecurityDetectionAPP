@@ -141,4 +141,6 @@ public abstract class BaseView <P extends IBasePresenter>  extends Fragment impl
     }
 
 
+
+
 }

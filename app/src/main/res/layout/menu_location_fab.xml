@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.clans.fab.FloatingActionMenu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fab_loaction_menu"
+    style="@style/FabMenu"
+    android:layout_gravity="bottom|end"
+    android:layout_margin="16dp"
+    app:menu_colorNormal="#3E99D2"
+    app:menu_colorPressed="#2488C6"
+    app:menu_colorRipple="#AF2488C6"
+    app:menu_labels_ellipsize="end"
+    app:menu_labels_singleLine="true"
+    tools:ignore="RtlHardcoded">
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_loading"
+        style="@style/FabMenu.Buttons"
+        android:src="@mipmap/insert_background"
+        app:fab_label="加载背景图片"/>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_switch"
+        style="@style/FabMenu.Buttons"
+        android:src="@mipmap/switch_edit"
+        app:fab_label="开启标注模式"/>
+
+
+</com.github.clans.fab.FloatingActionMenu>

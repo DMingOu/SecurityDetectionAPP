@@ -1,16 +1,12 @@
 package com.example.odm.securitydetectionapp.module.home.presenter;
 
 import com.example.odm.securitydetectionapp.base.presenter.BasePresenter;
-import com.example.odm.securitydetectionapp.module.home.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.home.contract.homeContract;
 import com.example.odm.securitydetectionapp.module.home.model.homeModel;
 import com.example.odm.securitydetectionapp.module.home.ui.capInfoAdapter;
 import com.example.odm.securitydetectionapp.module.home.ui.homeFragment;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.orhanobut.logger.Logger;
-
-import java.sql.Time;
-import java.util.List;
 
 /**
  * @author: ODM
