@@ -1,9 +1,8 @@
 package com.example.odm.securitydetectionapp.module.map_location.model;
 
 import com.example.odm.securitydetectionapp.bean.callBackInfo;
-import com.example.odm.securitydetectionapp.common.PointManager;
+import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
-import com.example.odm.securitydetectionapp.module.map_location.presenter.locationPresenter;
 import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.orhanobut.logger.Logger;
 

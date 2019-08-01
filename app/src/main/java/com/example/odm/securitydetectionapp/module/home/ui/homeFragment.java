@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
-import com.example.odm.securitydetectionapp.base.view.BaseView;
+import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.Constant;
 
 import com.example.odm.securitydetectionapp.common.emptyView;
@@ -24,12 +24,14 @@ import com.example.odm.securitydetectionapp.bean.callBackInfo;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.home.contract.homeContract;
 import com.example.odm.securitydetectionapp.module.home.presenter.homePresenter;
+import com.example.odm.securitydetectionapp.util.DialogUtils;
 import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.orhanobut.logger.Logger;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
+import com.xuexiang.xui.widget.dialog.DialogLoader;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
@@ -50,7 +52,7 @@ import butterknife.Unbinder;
  * @author: ODM
  * @date: 2019/7/25
  */
-public class homeFragment<P extends IBasePresenter> extends BaseView<homePresenter> implements homeContract.View {
+public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePresenter> implements homeContract.View {
 
 
     @BindView(R.id.status)
@@ -131,7 +133,7 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
         tb_Home.setListener(new CommonTitleBar.OnTitleBarListener() {
             @Override
             public void onClicked(View v, int action, String extra) {
-                //弹出一个可输入弹窗，用于切换服务器
+                //弹出弹窗切换服务器
                 showSwitchDialog();
             }
         });
@@ -173,7 +175,6 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                         case Constant.FAILURE:
                             view_Status.dismiss();
                             view_Status.setStatus(Status.ERROR);
-                            Logger.d("WebSocket连接失败" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
                             Logger.d("连接失败的url:" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK));
                             break;
                         default:
@@ -183,7 +184,6 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
             if (baseEvent != null && Constant.CAP.equals(baseEvent.type) && getAdapter() != null) {
                 //子模块信息到了，要进行处理，把它加入列表里面
                 if (baseEvent.content.startsWith("嵌")) {
-
                     CookieBar.builder(getActivity())
                             .setTitle("嵌入式设备已下线")
                             .setIcon(R.mipmap.warning_yellow)
@@ -192,7 +192,6 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
                             .setAction(R.string.known, null)
                             .show();
                 }
-
                 //准备将子模块加入列表中
                 getPresenter().checkCapInfo(baseEvent.content, getAdapter());
             } else {
@@ -204,7 +203,6 @@ public class homeFragment<P extends IBasePresenter> extends BaseView<homePresent
     @Override
     protected void lazyLoadData() {
         //需要每次进入页面才加载的内容
-
     }
 
 

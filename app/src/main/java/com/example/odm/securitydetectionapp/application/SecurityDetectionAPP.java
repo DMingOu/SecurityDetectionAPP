@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.core.GreenDaoManager;
-import com.example.odm.securitydetectionapp.core.echoWebSocketListener;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
 import com.example.odm.securitydetectionapp.core.eventbus.EventFactory;
@@ -24,8 +23,7 @@ import com.xuexiang.xui.XUI;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+
 
 /**
  * @author: ODM
@@ -34,8 +32,6 @@ import okhttp3.Request;
 public class SecurityDetectionAPP extends Application {
 
     private  static Context mContext;
-//    static echoWebSocketListener listener = new echoWebSocketListener();
-//    static OkHttpClient client = new OkHttpClient();
     static WebSocket  mWebsocket;
     private static final String TAG = "SecurityDetectionAPP";
     @Override
@@ -47,9 +43,6 @@ public class SecurityDetectionAPP extends Application {
         XUI.debug(true);
         mContext = getApplicationContext();
         Logger.addLogAdapter(new AndroidLogAdapter());
-        //云服务器 ws://121.40.165.18:8800
-        //ws://47.102.125.28:8080/websocket
-        //ws://echo.websocket.org
         initWebSocket("ws://47.102.125.28:8080/websocket");
         initGreenDao();
     }
@@ -58,6 +51,12 @@ public class SecurityDetectionAPP extends Application {
         return  mContext;
     }
 
+    /**
+     * 初始化WebSocket
+     *
+     * @param urlString the url string
+     * @return the web socket
+     */
     public static WebSocket initWebSocket(String  urlString ) {
         AsyncHttpClient.getDefaultInstance().websocket(
                 urlString, "8080", new AsyncHttpClient.WebSocketConnectCallback() {
@@ -72,7 +71,7 @@ public class SecurityDetectionAPP extends Application {
                             public void onStringAvailable(String data) {
                                 Logger.d("回调信息" + data);
                                 //成功连接后，服务器会自动发送消息
-                                if(data.startsWith("当") || data.startsWith("S")) {
+                                if(data.startsWith("当") || "SUCCESS".equals(data)) {
                                     BaseEvent baseEvent = EventFactory.getInstance();
                                     baseEvent.type = Constant.STATUS;
                                     baseEvent.content = Constant.SUCCESS;
@@ -89,27 +88,30 @@ public class SecurityDetectionAPP extends Application {
                             @Override
                             public void onDataAvailable(DataEmitter emitter, ByteBufferList byteBufferList) {
                                 Logger.d("I got some bytes!");
-                                // note that this data has been read
                                 byteBufferList.recycle();
                             }
                         });
                         mWebsocket = webSocket;
+                        // webSocket获取成功后，会覆盖之前的 地址存储
+                        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK ,urlString);
                     }
                 });
-       SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK ,urlString);
+
        return mWebsocket;
     }
 
+    /**
+     * 获取WebSocket
+     *
+     * @param urlString the url string
+     * @return the web socket
+     */
     public static WebSocket getWebSocket(String urlString) {
         String spUrlString = SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK, "");
 
         if (! urlString.equals(spUrlString)) {
-            //有新的服务器需要接入，更换websocket
+            //有新的服务器需要接入，尝试更换websocket
             try {
-//                Request request = new Request.Builder().url(urlString).build();
-//                socket = client.newWebSocket(request, listener);
-                //调用 client.newWebSocket()后会自动连接webSocket
-                //如果 SP 里面存有 地址，而且与 传进来的新地址不一样，则用新地址
                 WebSocket socketTmp = mWebsocket;
                 mWebsocket = initWebSocket(urlString);
                 //若更换成功，则返回成功后的webocket
@@ -117,7 +119,6 @@ public class SecurityDetectionAPP extends Application {
                     mWebsocket = socketTmp;
                     return  null;
                 } else {
-                    SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK, urlString);
                     return mWebsocket;
                 }
             } catch (IllegalArgumentException e) {
@@ -130,8 +131,11 @@ public class SecurityDetectionAPP extends Application {
 
     }
 
-    //全局初始化GreenDao
-    private void  initGreenDao(){
+
+    /**
+     * 全局初始化GreenDao.
+     */
+    public void  initGreenDao(){
         GreenDaoManager.getInstance().init(getApplicationContext());
     }
 

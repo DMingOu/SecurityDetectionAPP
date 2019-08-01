@@ -15,16 +15,22 @@
     tools:ignore="RtlHardcoded">
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/fab_loading"
+        android:id="@+id/fab_clearAll"
         style="@style/FabMenu.Buttons"
-        android:src="@mipmap/insert_background"
-        app:fab_label="加载背景图片"/>
+        android:src="@drawable/ic_clear"
+        app:fab_label="清空所有标记"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_switch"
         style="@style/FabMenu.Buttons"
         android:src="@mipmap/switch_edit"
         app:fab_label="开启标注模式"/>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_loading"
+        style="@style/FabMenu.Buttons"
+        android:src="@mipmap/insert_background"
+        app:fab_label="加载背景图片"/>
 
 
 </com.github.clans.fab.FloatingActionMenu>

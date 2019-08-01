@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,9 +23,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
-import com.example.odm.securitydetectionapp.base.view.BaseView;
+import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.Constant;
-import com.example.odm.securitydetectionapp.common.PointManager;
+import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
 import com.example.odm.securitydetectionapp.module.map_location.presenter.locationPresenter;
@@ -41,7 +40,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,59 +55,36 @@ import static android.app.Activity.RESULT_OK;
  * @author: ODM
  * @date: 2019 /7/26
  */
-public class locationFragment<P extends IBasePresenter> extends BaseView<locationPresenter> implements locationContract.View {
+public class locationFragment<P extends IBasePresenter> extends BaseFragment<locationPresenter> implements locationContract.View {
 
-
-    /**
-     * The Loadingbar.
-     */
     @BindView(R.id.loading)
     MKLoader loadingbar;
-
-    /**
-     * The Rmv locate.
-     */
     @BindView(R.id.rmv_locate)
     RadarMapView rmv_Locate;
-    /**
-     * The Tb location.
-     */
     @BindView(R.id.tb_location)
     CommonTitleBar tbLocation;
-    /**
-     * The Iv bg.
-     */
     @BindView(R.id.iv_background_location)
     ImageView iv_bg;
     private static final int REQUEST_CODE_GALLERY = 0x10;           // 图库选取图片标识请求码
     private static final int CROP_PHOTO = 0x12;                     // 裁剪图片标识请求码
     private static final int STORAGE_PERMISSION = 0x20;              // 动态申请存储权限标识
-    /**
-     * The Marker normal.
-     */
+
     @BindView(R.id.view_normal)
     normalMarkerView marker_normal;
-    /**
-     * The Fab loading.
-     */
+
     @BindView(R.id.fab_loading)
     FloatingActionButton fabLoading;
-    /**
-     * The Fab switch.
-     */
+
     @BindView(R.id.fab_switch)
     FloatingActionButton fabSwitch;
-    /**
-     * The Fab menu.
-     */
+
     @BindView(R.id.fab_loaction_menu)
     FloatingActionMenu fabMenu;
+    @BindView(R.id.fab_clearAll)
+    FloatingActionButton fabClearAll;
     private File imageFile = null;// 声明File对象
     private Uri imageUri = null;// 裁剪后的图片uri
-    private String path = "";
-    /**
-     * The Unbinder.
-     */
+
     Unbinder unbinder;
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
@@ -126,7 +101,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
         View view = inflater.inflate(R.layout.fragment_location, container, false);
         unbinder = ButterKnife.bind(this, view);
         initViews();
-        if(checkMarkerStatus()) {
+        if (checkMarkerStatus()) {
             marker_normal.setVisibility(View.VISIBLE);
         }
         return view;
@@ -144,21 +119,24 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
      *
      * @param v the v
      */
-    @OnClick({R.id.fab_loading ,R.id.fab_switch})
-    void  onClick(View v) {
+    @OnClick({R.id.fab_loading, R.id.fab_switch, R.id.fab_clearAll})
+    void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_loading:
                 selectBackGround();
                 break;
+            case R.id.fab_clearAll:
+                marker_normal.clearAllMarker();
+                break;
             case R.id.fab_switch:
-                if(imageUri == null) {
+                if (imageUri == null) {
                     ToastUtil.showLongToastCenter("\r当前未设置背景图，无法开启标注模式!");
                     break;
                 }
-                if(! isEditted ) {
+                if (!isEditted) {
                     //准备开启标注模式
                     marker_normal.setEditted(true);
-                    if(marker_normal.getVisibility() == View.INVISIBLE) {
+                    if (marker_normal.getVisibility() == View.INVISIBLE) {
                         marker_normal.setVisibility(View.VISIBLE);
                     }
                     fabSwitch.setLabelText("关闭标注模式");
@@ -170,10 +148,10 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
                     isEditted = false;
                 }
                 break;
-                default:
+            default:
         }
         fabMenu.toggle(false);
-     }
+    }
 
     //注册绑定EventBus
     @Override
@@ -182,13 +160,12 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     @Override
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
         if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
-                getPresenter().handleCallBack(baseEvent.content);
+            getPresenter().handleCallBack(baseEvent.content);
         }
     }
 
@@ -219,7 +196,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
     }
 
     /**
-     * 接收#startActivityForResult(Intent, int)调用的结果
+     * 接收startActivityForResult(Intent, int)调用的结果
      *
      * @param requestCode 请求码 识别这个结果来自谁
      * @param resultCode  结果码
@@ -227,7 +204,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             // 操作完成了
             switch (requestCode) {
@@ -275,7 +251,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
     }
 
     /**
-     *  定位信息添加进异常列表后的调用方法
+     * 定位信息添加进异常列表后的调用方法
      */
     @Override
     public void updateAbnormalList() {
@@ -371,11 +347,11 @@ public class locationFragment<P extends IBasePresenter> extends BaseView<locatio
      *
      * @return the boolean
      */
-    public  boolean checkMarkerStatus() {
-        if(PointManager.getPointList().size() > 0) {
+    public boolean checkMarkerStatus() {
+        if (PointManager.getPointList().size() > 0) {
             //normalMarkerView会在画图时将坐标存PointManger,如果size大于0
             //说明已经开标注模式，标注过点了，那么已经在加载页面时将上次离开页面时的点加载出来
-            return  true;
+            return true;
         } else {
             return false;
         }

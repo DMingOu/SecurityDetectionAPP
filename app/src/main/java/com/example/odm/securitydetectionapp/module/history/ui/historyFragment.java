@@ -12,14 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
-import com.example.odm.securitydetectionapp.base.view.BaseView;
+
+import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.noHistoryView;
 import com.example.odm.securitydetectionapp.module.history.bean.historyErrorMsg;
 import com.example.odm.securitydetectionapp.module.history.contract.historyContract;
 import com.example.odm.securitydetectionapp.module.history.presenter.historyPresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.orhanobut.logger.Logger;
-import com.xuexiang.xui.utils.StatusBarUtils;
+
 import com.xuexiang.xui.widget.statelayout.MultipleStatusView;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import butterknife.Unbinder;
  * @author: ODM
  * @date: 2019/7/26
  */
-public class historyFragment<P extends IBasePresenter> extends BaseView<historyPresenter> implements historyContract.View {
+public class historyFragment<P extends IBasePresenter> extends BaseFragment<historyPresenter> implements historyContract.View {
 
     @BindView(R.id.rv_history)
     RecyclerView rv_History;
@@ -49,8 +50,6 @@ public class historyFragment<P extends IBasePresenter> extends BaseView<historyP
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        StatusBarUtils.setStatusBarLightMode(getActivity());
     }
 
     @Nullable

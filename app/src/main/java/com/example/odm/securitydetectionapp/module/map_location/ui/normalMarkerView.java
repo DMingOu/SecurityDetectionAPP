@@ -4,22 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RectF;
 import android.text.InputType;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.example.odm.securitydetectionapp.R;
-import com.example.odm.securitydetectionapp.common.PointManager;
-import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
-import com.example.odm.securitydetectionapp.util.ToastUtil;
+import com.example.odm.securitydetectionapp.core.PointManager;
 import com.orhanobut.logger.Logger;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
@@ -36,6 +30,9 @@ import static com.xuexiang.xui.utils.ResUtils.getString;
  */
 public class normalMarkerView  extends View {
 
+    /**
+     * 用户触碰相对于手机的坐标类
+     */
     public class currentPoint {
         float currentX;
         float currentY;
@@ -52,12 +49,13 @@ public class normalMarkerView  extends View {
     private Bitmap bmp_abnormal;
     Paint mPaint;
     Paint mPaint_red;
-    // 宽高
-    private int mWidth, mHeight;
+    //存储用户触碰坐标的列表
     private List<currentPoint> points;
+    //存储用户输入信息的列表
     private List<String> coordinatesList;
+    //存储异常信息的列表
     private List<String> abnormalList;
-    //让外部调用者控制的变量，ture为可绘制状态
+    //让外部调用者控制的变量，ture为可绘制View状态
     private boolean isEditted;
     private static final String TAG = "normalMarkerView";
     float offY;
@@ -85,8 +83,6 @@ public class normalMarkerView  extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mWidth = w;
-        mHeight = h;
     }
 
     //初始化你需要显示的光标样式 和 存储点
@@ -140,21 +136,17 @@ public class normalMarkerView  extends View {
     }
 
 
+    /*
+    * 触碰事件--监听用户对屏幕的动作
+     */
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //当前组件的currentX、currentY两个属性
-        //event.getAction()判断事件的类型
-        // isClickView = true;
-        //抬起才标点，防止了滑动事件冲突
         if (event.getAction() == MotionEvent.ACTION_UP && bmp_normal != null) {
-//            this.currentX = -bmp.getWidth();
-//            this.currentY = -bmp.getHeight();
             this.currentX = event.getX();
             this.currentY = event.getY();
             if (isEditted) {
-                points.add(new currentPoint(currentX, currentY));
-                PointManager.setPointList(points);
-                showConfirmDialog();
+                showConfirmDialog(currentX,currentY);
             } else {
                 Logger.d("当前为非编辑状态");
             }
@@ -162,41 +154,32 @@ public class normalMarkerView  extends View {
         return true;
     }
 
-        public void showConfirmDialog () {
+        public void showConfirmDialog (float currentX ,float currentY) {
             new MaterialDialog.Builder(getContext())
                     .title("提示")
                     .content("请输入当前模块的坐标信息")
                     .inputType(
                             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                     .input(
-                            getString(R.string.hint_please_input_password),
-                            "",
-                            false,
-                            (new MaterialDialog.InputCallback() {
+                            getString(R.string.hint_please_input_password), "", false, new MaterialDialog.InputCallback() {
                                 @Override
                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-
                                 }
-                            }))
-                    //右下角的按钮--确认按钮
+                            })
                     .positiveText(R.string.lab_continue)
-                    //左下角的按钮--取消按钮
                     .negativeText(R.string.lab_cancel)
+                    //若用户主动取消了模块的信息输入，则该点不做标记，反之打上标记
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             String coordinate = dialog.getInputEditText().getText().toString();
+                            points.add(new currentPoint(currentX, currentY));
+                            PointManager.setPointList(points);
                             handleCoordinate(coordinate);
-
                         }
                     })
                     .cancelable(true)
                     .show();
-        }
-
-
-        public boolean isEditted () {
-            return isEditted;
         }
 
         public void setEditted ( boolean editted){
@@ -208,6 +191,16 @@ public class normalMarkerView  extends View {
                 coordinatesList.add(info);
                 PointManager.setCoordinatesList(coordinatesList);
             }
+        }
+
+        public void  clearAllMarker() {
+            points.clear();
+            coordinatesList.clear();
+            abnormalList.clear();
+            PointManager.setPointList(points);
+            PointManager.setAbnormalList(abnormalList);
+            PointManager.setCoordinatesList(coordinatesList);
+            invalidate();
         }
     }
 

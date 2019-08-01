@@ -117,16 +117,20 @@ public class homeModel extends BaseModel<homePresenter> implements homeContract.
     */
     @Override
     public void switchWebSocket(String newUrl ,capInfoAdapter adapter) {
-        WebSocket  newSocket = SecurityDetectionAPP.getWebSocket(newUrl);
-
-        ToastUtil.showLongToastCenter("连接中");
-        if (newSocket == null) {
-            ToastUtil.showLongToastTop("切换服务器失败");
-            Logger.d("切换服务器失败: "+ newUrl);
+        WebSocket  newSocket;
+        if(newUrl.startsWith("w")) {
+            ToastUtil.showLongToastCenter("连接中");
+            newSocket = SecurityDetectionAPP.getWebSocket(newUrl);
+            if (newSocket == null) {
+                ToastUtil.showLongToastCenter("切换服务器失败");
+                Logger.d("切换服务器失败: "+ newUrl);
+            } else {
+                //清空子模块列表
+                clearAllCapInfo(adapter);
+                webSocket = newSocket;
+            }
         } else {
-            //清空子模块列表
-            clearAllCapInfo(adapter);
-            webSocket = newSocket;
+            ToastUtil.showLongToastCenter("无法识别此地址");
         }
     }
 

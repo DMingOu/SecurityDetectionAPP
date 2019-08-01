@@ -1,4 +1,4 @@
-package com.example.odm.securitydetectionapp.common;
+package com.example.odm.securitydetectionapp.core;
 
 import android.util.ArrayMap;
 

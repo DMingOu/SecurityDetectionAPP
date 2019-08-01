@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * @author: ODM
  * @date: 2019/7/25
  */
-public abstract class BaseView <P extends IBasePresenter>  extends Fragment implements IBaseView {
+public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment implements IBaseView {
 
     private P mPresenter;
     private boolean isViewCreated;//视图是否已经创建
