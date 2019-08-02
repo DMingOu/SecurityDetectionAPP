@@ -1,4 +1,4 @@
-package com.example.odm.securitydetectionapp.module.home.ui;
+package com.example.odm.securitydetectionapp.module.watch.ui;
 
 import androidx.annotation.NonNull;
 

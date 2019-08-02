@@ -36,7 +36,6 @@ public class SecurityDetectionAPP extends Application {
     private static final String TAG = "SecurityDetectionAPP";
     @Override
     public void onCreate() {
-
         super.onCreate();
         //初始化UI框架
         XUI.init(this);
@@ -57,7 +56,7 @@ public class SecurityDetectionAPP extends Application {
      * @param urlString the url string
      * @return the web socket
      */
-    public static WebSocket initWebSocket(String  urlString ) {
+    private static WebSocket initWebSocket(String  urlString ) {
         AsyncHttpClient.getDefaultInstance().websocket(
                 urlString, "8080", new AsyncHttpClient.WebSocketConnectCallback() {
                     @Override
@@ -102,6 +101,7 @@ public class SecurityDetectionAPP extends Application {
 
     /**
      * 获取WebSocket
+     *外部获取WebSocket的方法
      *
      * @param urlString the url string
      * @return the web socket

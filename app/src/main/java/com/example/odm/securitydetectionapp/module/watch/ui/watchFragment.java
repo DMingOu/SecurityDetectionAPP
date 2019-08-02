@@ -1,4 +1,4 @@
-package com.example.odm.securitydetectionapp.module.home.ui;
+package com.example.odm.securitydetectionapp.module.watch.ui;
 
 import android.os.Bundle;
 import android.text.InputType;
@@ -20,18 +20,14 @@ import com.example.odm.securitydetectionapp.common.Constant;
 
 import com.example.odm.securitydetectionapp.common.emptyView;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
-import com.example.odm.securitydetectionapp.bean.callBackInfo;
 import com.example.odm.securitydetectionapp.bean.capInfo;
-import com.example.odm.securitydetectionapp.module.home.contract.homeContract;
-import com.example.odm.securitydetectionapp.module.home.presenter.homePresenter;
-import com.example.odm.securitydetectionapp.util.DialogUtils;
-import com.example.odm.securitydetectionapp.util.GsonUtil;
+import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
+import com.example.odm.securitydetectionapp.module.watch.presenter.watchPresenter;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.orhanobut.logger.Logger;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
-import com.xuexiang.xui.widget.dialog.DialogLoader;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
@@ -52,7 +48,7 @@ import butterknife.Unbinder;
  * @author: ODM
  * @date: 2019/7/25
  */
-public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePresenter> implements homeContract.View {
+public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchPresenter> implements watchContract.View {
 
 
     @BindView(R.id.status)
@@ -66,9 +62,11 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
     private capInfoAdapter mAdapter;
     private List<capInfo> mCapList;
     private boolean  currentVisity;
+    MaterialDialog.Builder builder;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -84,7 +82,7 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
 
 
     public void initViews() {
-
+        builder  = new MaterialDialog.Builder(getContext());
         mCapList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -141,8 +139,8 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
 
 
     @Override
-    public homePresenter onBindPresenter() {
-        return new homePresenter(this);
+    public watchPresenter onBindPresenter() {
+        return new watchPresenter(this);
     }
 
 
@@ -226,8 +224,8 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
      * 弹出输入对话框，切换服务器.
      */
     public void showSwitchDialog() {
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.warning_red_round)
+        //new MaterialDialog.Builder(getContext())
+        builder.iconRes(R.drawable.warning_red_round)
                 .title("提示")
                 .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "\r确定要切换吗")
                 .inputType(
@@ -266,8 +264,8 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
      * 简单的提示性对话框
      */
     public void showSimpleTipDialog(String  warnString) {
-        new MaterialDialog.Builder(getContext())
-                .iconRes(R.mipmap.warning_yellow)
+//        new MaterialDialog.Builder(getContext())
+                builder.iconRes(R.mipmap.warning_yellow)
                 .title(R.string.warning)
                 .content(warnString)
                 .positiveText(R.string.known)
@@ -280,8 +278,8 @@ public class homeFragment<P extends IBasePresenter> extends BaseFragment<homePre
      * 简单的确认对话框
      */
     public void showSimpleConfirmDialog(String address) {
-        new MaterialDialog.Builder(getContext())
-                .content("当前选中模块地址为：" + address)
+//        new MaterialDialog.Builder(getContext())
+                builder.content("当前选中模块地址为：" + address)
                 .positiveText("确认发送反馈")
                 .negativeText("取消发送")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {

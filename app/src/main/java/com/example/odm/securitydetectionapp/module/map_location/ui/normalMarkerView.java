@@ -14,12 +14,14 @@ import androidx.annotation.NonNull;
 
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.core.PointManager;
+import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.orhanobut.logger.Logger;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.xuexiang.xui.utils.ResUtils.getString;
@@ -59,6 +61,7 @@ public class normalMarkerView  extends View {
     private boolean isEditted;
     private static final String TAG = "normalMarkerView";
     float offY;
+    MaterialDialog.Builder builder;
     public normalMarkerView(Context context) {
         this(context, null);
     }
@@ -87,6 +90,7 @@ public class normalMarkerView  extends View {
 
     //初始化你需要显示的光标样式 和 存储点
     private void init() {
+        builder  = new MaterialDialog.Builder(getContext());
         points = new ArrayList<>();
         points.addAll(PointManager.getPointList());
         coordinatesList = new ArrayList<>();
@@ -98,7 +102,8 @@ public class normalMarkerView  extends View {
         }
         Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
         float fontTotalHeight = fontMetrics.bottom - fontMetrics.top;
-         offY = fontTotalHeight / 2 - fontMetrics.bottom;
+        offY = fontTotalHeight / 2 - fontMetrics.bottom;
+
     }
 
     @Override
@@ -155,8 +160,8 @@ public class normalMarkerView  extends View {
     }
 
         public void showConfirmDialog (float currentX ,float currentY) {
-            new MaterialDialog.Builder(getContext())
-                    .title("提示")
+//            new MaterialDialog.Builder(getContext())
+            builder.title("提示")
                     .content("请输入当前模块的坐标信息")
                     .inputType(
                             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
@@ -173,9 +178,17 @@ public class normalMarkerView  extends View {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             String coordinate = dialog.getInputEditText().getText().toString();
-                            points.add(new currentPoint(currentX, currentY));
-                            PointManager.setPointList(points);
-                            handleCoordinate(coordinate);
+                            String pattern = "^[A-Za-z0-9]+$";
+                            boolean isMatch = Pattern.matches(pattern ,coordinate);
+                            // isMatch 为 true ，说明 用户输入只包含 字母和数字
+                            if( isMatch) {
+                                points.add(new currentPoint(currentX, currentY));
+                                PointManager.setPointList(points);
+                                handleCoordinate(coordinate);
+                            } else {
+                                ToastUtil.showShortToastCenter("只能输入英文字母以及数字！");
+                            }
+
                         }
                     })
                     .cancelable(true)

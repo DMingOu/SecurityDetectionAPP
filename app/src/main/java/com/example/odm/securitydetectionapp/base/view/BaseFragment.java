@@ -25,8 +25,10 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment implements IBaseView {
 
     private P mPresenter;
-    private boolean isViewCreated;//视图是否已经创建
-    private boolean isUiVisible;//该fragment是否对用户可见
+    //Fragment的View加载完毕的标记
+    private boolean isViewCreated;
+    //Fragment对用户可见的标记
+    private boolean isUiVisible;
 
     /**
      * 创建 Presenter

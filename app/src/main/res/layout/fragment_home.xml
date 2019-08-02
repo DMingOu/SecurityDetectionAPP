@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".module.home.ui.homeFragment">
+    tools:context=".module.watch.ui.watchFragment">
 
     <com.wuhenzhizao.titlebar.widget.CommonTitleBar
         xmlns:titlebar="http://schemas.android.com/apk/res-auto"

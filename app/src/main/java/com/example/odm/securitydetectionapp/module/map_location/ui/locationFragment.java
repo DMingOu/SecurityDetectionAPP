@@ -227,6 +227,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     createImageFile();
                     if (imageFile != null) {
                         imageUri = Uri.fromFile(imageFile);
+                        //把裁剪后的图片从本地删除掉，原图不变
+                        imageFile.deleteOnExit();
                     }
                     if (imageUri != null) {
                         intent_gallery_crop.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
