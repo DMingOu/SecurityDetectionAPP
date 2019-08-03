@@ -21,7 +21,7 @@ public class capInfoAdapter extends BaseQuickAdapter <capInfo, BaseViewHolder> {
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, capInfo item) {
-        //首先在进入List前会进行判断是否为异常，如果数据异常直接丢掉数据无法加入List。
+        //首先在进入List前会进行判断是否为异常，如果数据异常无法加入List。
         // 如果子模块的状态为正常(true),则赋值
         if(item.isStatus()) {
             if("".equals(item.getData())) {

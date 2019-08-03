@@ -19,7 +19,7 @@ public class ToastUtil {
     /**
      * 短时间显示Toast【居下】
      * @param msg 显示的内容-字符串*/
-    public static void showShortToast(String msg) {
+    public static void showShortToastBottom (String msg) {
         if(SecurityDetectionAPP.getContext() != null){
             if (toast == null) {
                 toast = Toast.makeText(SecurityDetectionAPP.getContext(), msg, Toast.LENGTH_SHORT);
@@ -62,7 +62,7 @@ public class ToastUtil {
     /**
      * 长时间显示Toast【居下】
      * @param msg 显示的内容-字符串*/
-    public static void showLongToast(String msg) {
+    public static void showLongToastBottom (String msg) {
         if(SecurityDetectionAPP.getContext() != null) {
             if (toast == null) {
                 toast = Toast.makeText(SecurityDetectionAPP.getContext(), msg, Toast.LENGTH_LONG);

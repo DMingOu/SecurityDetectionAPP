@@ -20,7 +20,9 @@ import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -111,7 +113,8 @@ public class normalMarkerView  extends View {
         //用背景图是否存在阻隔了自动画的点
         if (bmp_normal != null && bmp_abnormal != null) {
             //将坐标列表去重再使用，减少遍历次数
-            abnormalList = PointManager.getAbnormalList().stream().distinct().collect(Collectors.toList());
+            //abnormalList = PointManager.getAbnormalList().stream().distinct().collect(Collectors.toList());
+            abnormalList = removeDuplicate(PointManager.getAbnormalList());
             if (points.size() == coordinatesList.size()) {
                 for (int i = 0; i < points.size(); i++) {
                     float x = points.get(i).currentX - (bmp_normal.getWidth() / 2);
@@ -215,5 +218,13 @@ public class normalMarkerView  extends View {
             PointManager.setCoordinatesList(coordinatesList);
             invalidate();
         }
+
+    public static List<String> removeDuplicate(List<String> list)
+    {
+        Set<String> set1  = new LinkedHashSet<> (list);
+        list.clear();
+        list.addAll(set1);
+        return list;
     }
+}
 

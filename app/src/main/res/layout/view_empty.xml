@@ -18,5 +18,6 @@
         android:text="没有获取到数据，请尝试检查你的服务器"
         android:layout_centerHorizontal="true"
         android:textSize="20sp"
+        android:textColor="@color/xui_config_color_black"
         android:layout_below="@id/iv_empty"/>
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package com.example.odm.securitydetectionapp.module.map_location.ui;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +88,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     FloatingActionButton fabClearAll;
     private File imageFile = null;// 声明File对象
     private Uri imageUri = null;// 裁剪后的图片uri
+    private String imagePath = "";
+    private String imageName = "";
 
     Unbinder unbinder;
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
@@ -228,7 +234,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     if (imageFile != null) {
                         imageUri = Uri.fromFile(imageFile);
                         //把裁剪后的图片从本地删除掉，原图不变
-                        imageFile.deleteOnExit();
+                        deletePicture(imagePath,getContext());
+                        Logger.d("再次执行文件删除");
                     }
                     if (imageUri != null) {
                         intent_gallery_crop.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -268,10 +275,14 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         try {
             if (imageFile != null && imageFile.exists()) {
                 imageFile.delete();
+                imageFile.deleteOnExit();
+                Logger.d("执行文件删除");
+                deletePicture(imagePath,getContext());
             }
             // 新建文件
-            imageFile = new File(Environment.getExternalStorageDirectory(),
-                    System.currentTimeMillis() + "background.jpg");
+            imageName = System.currentTimeMillis()+"background.jpg";
+            imageFile = new File(Environment.getExternalStorageDirectory(), imageName);
+            imagePath = "/storage/emulated/0/"+imageName;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -343,6 +354,26 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         }
 
     }
+
+
+    public  void deletePicture(String localPath, Context context) {
+        if(!TextUtils.isEmpty(localPath)){
+            Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver contentResolver = context.getContentResolver();
+            String url = MediaStore.Images.Media.DATA + "=?";
+            int deleteRows = contentResolver.delete(uri, url, new String[]{localPath});
+            if (deleteRows == 0) {//当生成图片时没有通知(插入到）媒体数据库，那么在图库里面看不到该图片，而且使用contentResolver.delete方法会返回0，此时使用file.delete方法删除文件
+                File file = new File(localPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+                if(!file.exists()) {
+                    Logger.d(imageName+"已经为空");
+                }
+            }
+        }
+    }
+
 
     /**
      * Check marker status boolean.

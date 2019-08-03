@@ -100,7 +100,7 @@ public class MainActivity extends FragmentActivity {
     private void exit() {
 
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            ToastUtil.showShortToast("再按一次返回键退出程序");
+            ToastUtil.showShortToastBottom("再按一次返回键退出程序");
             exitTime = System.currentTimeMillis();
         } else {
             finish();
