@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +19,13 @@ import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.Constant;
 
+import com.example.odm.securitydetectionapp.common.PopupWindowList;
 import com.example.odm.securitydetectionapp.common.emptyView;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
 import com.example.odm.securitydetectionapp.module.watch.presenter.watchPresenter;
+import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
@@ -63,6 +66,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     private List<capInfo> mCapList;
     private boolean  currentVisity;
     MaterialDialog.Builder builder;
+    private PopupWindowList mPopupWindowList;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +98,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //如果子模块的属性为异常，则会呼出一个信息弹窗
-                    String errorData = mAdapter.getData().get(position).getData();
+                String errorData = mAdapter.getData().get(position).getData();
                 if(! "".equals(errorData)){
                     showSimpleTipDialog(errorData);
                 }
@@ -107,7 +111,11 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 String errorData = mAdapter.getData().get(position).getData();
                 //非异常状态不能发送反馈
                 if(! "".equals(errorData)) {
+                    //触发效果：长按呼出弹窗，点击确认按钮后发送反馈
                     showSimpleConfirmDialog(mAdapter.getData().get(position).getAddress());
+                    //触发效果:长按呼出跟随子项的按钮列表，列表，列表
+//                    View itemview = rv_Module.getChildAt(position);
+//                    showCallButton(itemview , mAdapter.getData().get(position).getAddress());
                 }
                 return false;
             }
@@ -289,6 +297,30 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                     }
                 })
                 .show();
+    }
+
+
+    /*
+    * 显示跟随View的列表--仿微信长按效果
+    */
+
+    public void showCallButton(View  view ,String  address) {
+        List<String> callBackList = new ArrayList<>();
+        callBackList.add("发送反馈");
+        if (mPopupWindowList == null){
+            mPopupWindowList = new PopupWindowList(view.getContext());
+        }
+        mPopupWindowList.setAnchorView(view);
+        mPopupWindowList.setItemData(callBackList);
+        mPopupWindowList.setModal(true);
+        mPopupWindowList.show();
+        mPopupWindowList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                getPresenter().sendCallBack(address);
+                mPopupWindowList.hide();
+            }
+        });
     }
 
 

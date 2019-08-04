@@ -136,7 +136,6 @@ public class normalMarkerView  extends View {
                         canvas.drawBitmap(bmp_normal, x, y, mPaint);
                         canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint);
                     }
-
                 }
             }
         }
@@ -221,9 +220,9 @@ public class normalMarkerView  extends View {
 
     public static List<String> removeDuplicate(List<String> list)
     {
-        Set<String> set1  = new LinkedHashSet<> (list);
+        Set<String> set  = new LinkedHashSet<> (list);
         list.clear();
-        list.addAll(set1);
+        list.addAll(set);
         return list;
     }
 }

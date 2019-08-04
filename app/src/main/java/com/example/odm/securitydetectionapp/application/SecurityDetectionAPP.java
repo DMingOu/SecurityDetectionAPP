@@ -18,6 +18,7 @@ import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.squareup.leakcanary.LeakCanary;
 import com.xuexiang.xui.XUI;
 
 import java.util.Timer;
@@ -37,6 +38,12 @@ public class SecurityDetectionAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //LeakCanary内存泄漏检测初始化
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            //此过程专用于LeakCanary进行堆分析。在此过程中不应初始化应用程序。
+            return;
+        }
+        LeakCanary.install(this);
         //初始化UI框架
         XUI.init(this);
         XUI.debug(true);
