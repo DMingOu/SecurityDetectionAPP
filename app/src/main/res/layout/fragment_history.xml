@@ -44,7 +44,7 @@
         android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="58dp"
-        android:src="@drawable/fb_updown"
+        android:src="@drawable/ic_history_up"
         android:elevation="8dp"
         android:visibility="invisible"
         />

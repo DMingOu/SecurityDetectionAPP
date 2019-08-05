@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.xuexiang.xui.utils.ResUtils.getString;
 
@@ -99,8 +98,8 @@ public class normalMarkerView  extends View {
         coordinatesList.addAll(PointManager.getCoordinatesLis());
         abnormalList = new ArrayList<>();
         if (bmp_normal == null || bmp_abnormal == null) {
-            bmp_normal = BitmapFactory.decodeResource(getResources(), R.drawable.mark_normal);
-            bmp_abnormal = BitmapFactory.decodeResource(getResources(), R.drawable.mark_abnormal);
+            bmp_normal = BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_normal);
+            bmp_abnormal = BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_abnormal);
         }
         Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
         float fontTotalHeight = fontMetrics.bottom - fontMetrics.top;

@@ -25,7 +25,6 @@ import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
 import com.example.odm.securitydetectionapp.module.watch.presenter.watchPresenter;
-import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
@@ -233,7 +232,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
      */
     public void showSwitchDialog() {
         //new MaterialDialog.Builder(getContext())
-        builder.iconRes(R.drawable.warning_red_round)
+        builder.iconRes(R.drawable.ic_watch_dialog_warning_red)
                 .title("提示")
                 .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "\r确定要切换吗")
                 .inputType(

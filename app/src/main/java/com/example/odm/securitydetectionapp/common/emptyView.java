@@ -21,7 +21,7 @@ public class emptyView  extends RelativeLayout {
     public emptyView (Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        View inflate = inflate(SecurityDetectionAPP.getContext(), R.layout.view_empty, this);
+        View inflate = inflate(SecurityDetectionAPP.getContext(), R.layout.view_watch_empty, this);
     }
 
     public emptyView(Context context, AttributeSet attrs, int defStyleAttr) {

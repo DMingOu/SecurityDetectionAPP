@@ -9,7 +9,7 @@
         android:id="@+id/iv_empty"
         android:layout_width="210dp"
         android:layout_height="210dp"
-        android:src="@drawable/qglogo"
+        android:src="@drawable/ic_layout_background_empty"
         android:layout_centerInParent="true"/>
     <TextView
         android:id= "@+id/tv_empty"

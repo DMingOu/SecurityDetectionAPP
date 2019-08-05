@@ -11,7 +11,7 @@
         android:layout_height="2dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/divide"/>
+        android:background="@drawable/shape_history_divide"/>
     <TextView
         android:id = "@+id/tv_history_address"
         android:layout_marginTop="16dp"
@@ -45,6 +45,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:layout_alignRight="@id/tv_history_time"
-        android:background="@drawable/divide"/>
+        android:background="@drawable/shape_history_divide"/>
 
 </RelativeLayout>
