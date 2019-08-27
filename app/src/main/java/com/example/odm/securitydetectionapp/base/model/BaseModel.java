@@ -15,4 +15,5 @@ public abstract class BaseModel <P extends IBasePresenter> implements IBaseModel
     public P getPresenter(){
         return mPresenterRef.get();
     }
+
 }

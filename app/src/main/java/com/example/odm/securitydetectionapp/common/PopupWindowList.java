@@ -108,10 +108,10 @@ public class PopupWindowList {
 
     public void show() {
         if (mAnchorView == null) {
-            throw new IllegalArgumentException("PopupWindow show location view can  not be null");
+            throw new IllegalArgumentException("PopupWindow 依附的 view 不可以为空");
         }
         if (mItemData == null) {
-            throw new IllegalArgumentException("please fill ListView Data");
+            throw new IllegalArgumentException("需要填充PopupView列表");
         }
         mPopView = new ListView(mContext);
         mPopView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.white));

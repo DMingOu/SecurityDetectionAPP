@@ -68,7 +68,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @BindView(R.id.tb_location)
     CommonTitleBar tbLocation;
     @BindView(R.id.iv_background_location)
-    ImageView iv_bg;
+    ImageView iv_background;
     private static final int REQUEST_CODE_GALLERY = 0x10;           // 图库选取图片标识请求码
     private static final int CROP_PHOTO = 0x12;                     // 裁剪图片标识请求码
     private static final int STORAGE_PERMISSION = 0x20;              // 动态申请存储权限标识
@@ -261,6 +261,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
     /**
      * 定位信息添加进异常列表后的调用方法
+     * 重绘制页面
      */
     @Override
     public void updateAbnormalList() {
@@ -305,7 +306,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     // 异常占位图
                     .error(R.mipmap.ic_launcher_round)
                     .transform(new CenterCrop())
-                    .into(iv_bg);
+                    .into(iv_background);
         } catch (Exception e) {
             e.printStackTrace();
         }

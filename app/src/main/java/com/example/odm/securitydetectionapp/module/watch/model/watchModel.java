@@ -11,6 +11,7 @@ import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
 import com.example.odm.securitydetectionapp.module.watch.presenter.watchPresenter;
 import com.example.odm.securitydetectionapp.module.watch.ui.capInfoAdapter;
 import com.example.odm.securitydetectionapp.util.GsonUtil;
+import com.example.odm.securitydetectionapp.util.RegexUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
@@ -35,7 +36,8 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     private DaoSession historyDaoSession;
     boolean isDuplicated;
     public watchModel() {
-        webSocket = SecurityDetectionAPP.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""));
+        webSocket = SecurityDetectionAPP.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""),
+                                                      SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.PROTOCOL , ""));
         capInfoList = new ArrayList<>();
         historyDaoSession = GreenDaoManager.getInstance().getDaoSession();
     }
@@ -124,13 +126,14 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
         WebSocket  newSocket;
         String pattern = "(^ws:)+(.*websocket.*)";
         boolean isMatch = Pattern.matches(pattern , newUrl);
+        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
+
         //匹配 以 ws 开头，且字符串包含 websocket 的地址
         if(isMatch) {
             ToastUtil.showLongToastCenter("连接中");
-            newSocket = SecurityDetectionAPP.getWebSocket(newUrl);
+            newSocket = SecurityDetectionAPP.getWebSocket(newUrl , protocolList.get(0));
             if (newSocket == null) {
                 ToastUtil.showLongToastCenter("切换服务器失败");
-                Logger.d("切换服务器失败: "+ newUrl);
             } else {
                 //清空子模块列表
                 clearAllCapInfo(adapter);

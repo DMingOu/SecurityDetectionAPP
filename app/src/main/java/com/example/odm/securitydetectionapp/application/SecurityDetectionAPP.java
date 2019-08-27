@@ -49,7 +49,7 @@ public class SecurityDetectionAPP extends Application {
         XUI.debug(true);
         mContext = getApplicationContext();
         Logger.addLogAdapter(new AndroidLogAdapter());
-        initWebSocket("ws://47.102.125.28:8080/websocket");
+        initWebSocket("ws://47.102.125.28:8080/websocket" , "8080");
         initGreenDao();
     }
 
@@ -63,9 +63,9 @@ public class SecurityDetectionAPP extends Application {
      * @param urlString the url string
      * @return the web socket
      */
-    private static WebSocket initWebSocket(String  urlString ) {
+    private static WebSocket initWebSocket(String  urlString , String protocol ) {
         AsyncHttpClient.getDefaultInstance().websocket(
-                urlString, "8080", new AsyncHttpClient.WebSocketConnectCallback() {
+                urlString, protocol, new AsyncHttpClient.WebSocketConnectCallback() {
                     @Override
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
@@ -100,6 +100,7 @@ public class SecurityDetectionAPP extends Application {
                         mWebsocket = webSocket;
                         // webSocket获取成功后，会覆盖之前的 地址存储
                         SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK ,urlString);
+                        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.PROTOCOL , protocol);
                     }
                 });
 
@@ -113,14 +114,14 @@ public class SecurityDetectionAPP extends Application {
      * @param urlString the url string
      * @return the web socket
      */
-    public static WebSocket getWebSocket(String urlString) {
+    public static WebSocket getWebSocket(String urlString , String protocol) {
         String spUrlString = SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK, "");
 
         if (! urlString.equals(spUrlString)) {
             //有新的服务器需要接入，尝试更换websocket
             try {
                 WebSocket socketTmp = mWebsocket;
-                mWebsocket = initWebSocket(urlString);
+                mWebsocket = initWebSocket(urlString , protocol);
                 //若更换成功，则返回成功后的webocket
                 if(mWebsocket == null) {
                     mWebsocket = socketTmp;
