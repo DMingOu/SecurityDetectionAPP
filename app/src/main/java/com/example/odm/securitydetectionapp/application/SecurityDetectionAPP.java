@@ -1,5 +1,6 @@
 package com.example.odm.securitydetectionapp.application;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
@@ -11,6 +12,7 @@ import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
 import com.example.odm.securitydetectionapp.core.eventbus.EventFactory;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
+import com.fm.openinstall.OpenInstall;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.DataCallback;
@@ -49,8 +51,11 @@ public class SecurityDetectionAPP extends Application {
         XUI.debug(true);
         mContext = getApplicationContext();
         Logger.addLogAdapter(new AndroidLogAdapter());
-        initWebSocket("ws://47.102.125.28:8080/websocket" , "8080");
+        initWebSocket("ws://192.168.1.138:8888/websocket" , "");
         initGreenDao();
+        if (isMainProcess()) {
+            OpenInstall.init(this);
+        }
     }
 
     public static  Context getContext(){
@@ -64,20 +69,22 @@ public class SecurityDetectionAPP extends Application {
      * @return the web socket
      */
     private static WebSocket initWebSocket(String  urlString , String protocol ) {
+        Logger.d("开始连接WebSocket");
         AsyncHttpClient.getDefaultInstance().websocket(
-                urlString, protocol, new AsyncHttpClient.WebSocketConnectCallback() {
+                urlString, "", new AsyncHttpClient.WebSocketConnectCallback() {
                     @Override
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
                             ex.printStackTrace();
+                            Logger.d("出问题？"+ex.getMessage());
                             return;
                          }
                         webSocket.setStringCallback(new com.koushikdutta.async.http.WebSocket.StringCallback() {
                             @Override
                             public void onStringAvailable(String data) {
-                                Logger.d("回调信息" + data);
+                                Logger.d("回调信息:   " + data);
                                 //成功连接后，服务器会自动发送消息
-                                if(data.startsWith("当") || "SUCCESS".equals(data)) {
+                                if(data.startsWith("连") || "SUCCESS".equals(data)) {
                                     BaseEvent baseEvent = EventFactory.getInstance();
                                     baseEvent.type = Constant.STATUS;
                                     baseEvent.content = Constant.SUCCESS;
@@ -100,7 +107,7 @@ public class SecurityDetectionAPP extends Application {
                         mWebsocket = webSocket;
                         // webSocket获取成功后，会覆盖之前的 地址存储
                         SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK ,urlString);
-                        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.PROTOCOL , protocol);
+//                        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.PROTOCOL , protocol);
                     }
                 });
 
@@ -147,5 +154,16 @@ public class SecurityDetectionAPP extends Application {
         GreenDaoManager.getInstance().init(getApplicationContext());
     }
 
+
+    public boolean isMainProcess() {
+        int pid = android.os.Process.myPid();
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager.getRunningAppProcesses()) {
+            if (appProcess.pid == pid) {
+                return getApplicationInfo().packageName.equals(appProcess.processName);
+            }
+        }
+        return false;
+    }
 
 }

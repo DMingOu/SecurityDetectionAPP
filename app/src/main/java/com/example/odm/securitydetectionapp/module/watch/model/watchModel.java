@@ -37,7 +37,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     boolean isDuplicated;
     public watchModel() {
         webSocket = SecurityDetectionAPP.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""),
-                                                      SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.PROTOCOL , ""));
+                                                      "");
         capInfoList = new ArrayList<>();
         historyDaoSession = GreenDaoManager.getInstance().getDaoSession();
     }
@@ -126,12 +126,12 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
         WebSocket  newSocket;
         String pattern = "(^ws:)+(.*websocket.*)";
         boolean isMatch = Pattern.matches(pattern , newUrl);
-        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
-
+//        //捕获新Websocket地址的端口值
+//        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
         //匹配 以 ws 开头，且字符串包含 websocket 的地址
         if(isMatch) {
             ToastUtil.showLongToastCenter("连接中");
-            newSocket = SecurityDetectionAPP.getWebSocket(newUrl , protocolList.get(0));
+            newSocket = SecurityDetectionAPP.getWebSocket(newUrl , "");
             if (newSocket == null) {
                 ToastUtil.showLongToastCenter("切换服务器失败");
             } else {
