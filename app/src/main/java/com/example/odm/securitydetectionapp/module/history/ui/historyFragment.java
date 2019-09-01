@@ -31,16 +31,16 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * @author: ODM
- * @date: 2019/7/26
+ * 历史记录页面View层
+ *
+ * author: ODM
+ * date: 2019/7/26
  */
 public class historyFragment<P extends IBasePresenter> extends BaseFragment<historyPresenter> implements historyContract.View {
 
     @BindView(R.id.rv_history)
     RecyclerView rv_History;
-    Unbinder unbinder;
-    @BindView(R.id.fb_updown)
-    FloatingActionButton fb_Updown;
+
     private historyAdapter mAdapter;
     private List<historyErrorMsg> msgList;
     //目标项是否在最后一个可见项之后
@@ -56,7 +56,7 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         initViews();
         return view;
     }
@@ -71,26 +71,17 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
         rv_History.setLayoutManager(layoutManager);
         rv_History.setAdapter(mAdapter);
         mAdapter.setEmptyView(new noHistoryView(getContext(), null));
-        if( mAdapter.getItemCount() > 1) {
-            fb_Updown.setVisibility(View.VISIBLE);
-            Logger.d("设置悬浮按钮可见");
-        } else {
-            fb_Updown.setVisibility(View.INVISIBLE);
-        }
-        fb_Updown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                smoothMoveToPosition(rv_History , 0);
-            }
-        });
+
     }
 
     @Override
     protected void lazyLoadData() {
         getPresenter().loadHistoryList(mAdapter);
-        rv_History.scrollToPosition(mAdapter.getItemCount() - 1 );
-        LinearLayoutManager mLayoutManager = (LinearLayoutManager) rv_History.getLayoutManager();
-        mLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1  , 0);
+        if(mAdapter.getItemCount() > 0) {
+            rv_History.scrollToPosition(mAdapter.getItemCount() - 1 );
+            LinearLayoutManager mLayoutManager = (LinearLayoutManager) rv_History.getLayoutManager();
+            mLayoutManager.scrollToPositionWithOffset(mAdapter.getItemCount() - 1  , 0);
+        }
     }
 
     @Override

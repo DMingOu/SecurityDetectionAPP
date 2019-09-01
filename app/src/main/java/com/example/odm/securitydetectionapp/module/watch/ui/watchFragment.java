@@ -47,8 +47,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * @author: ODM
- * @date: 2019/7/25
+ * 监控页面 View 层
+ *
+ * author: ODM
+ * date: 2019/7/25
  */
 public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchPresenter> implements watchContract.View {
 
@@ -92,7 +94,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         rv_Module.setLayoutManager(layoutManager);
         mAdapter = new capInfoAdapter(R.layout.item_cap ,mCapList);
         rv_Module.setAdapter(mAdapter);
-        //子项点击事件
+        //列表子项点击事件
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -103,7 +105,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 }
             }
         });
-        //子项长按事件
+        //滚动列表子项长按事件
         mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
@@ -121,9 +123,8 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         });
         //为Adaper加载空布局
         getAdapter().setEmptyView(new emptyView(getContext() ,null));
-        //加载布局
-        view_Status.setStatus(Status.LOADING);
-        //手动点击关闭 "连接失败"弹窗
+        showLoading();
+        //手动点击可以关闭 "连接失败"弹窗
         view_Status.setOnErrorClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,9 +133,27 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         });
     }
 
+    /**
+     * 状态布局 设置为 连接中
+     */
+    @Override
+    public void showLoading() {
+        super.showLoading();
 
+        view_Status.setStatus(Status.LOADING);
 
-    public void initToolbar() {
+    }
+
+    /**
+     * 隐藏 状态布局
+     */
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+        view_Status.dismiss();
+    }
+
+    private void initToolbar() {
         tb_Home.setListener(new CommonTitleBar.OnTitleBarListener() {
             @Override
             public void onClicked(View v, int action, String extra) {
@@ -173,20 +192,23 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 if (view_Status != null) {
                     switch (baseEvent.content) {
                         case Constant.SUCCESS:
-                            view_Status.dismiss();
-                            view_Status.setStatus(Status.COMPLETE);
-                            Logger.d("WebSocket连接成功了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
+
+                            if(view_Status.getStatus() == Status.LOADING) {
+                                hideLoading();
+                                view_Status.setStatus(Status.COMPLETE);
+                            }
                             break;
                         case Constant.FAILURE:
-                            view_Status.dismiss();
-                            view_Status.setStatus(Status.ERROR);
-                            Logger.d("连接失败的url:" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK));
+                            if(view_Status.getStatus() == Status.LOADING) {
+                                hideLoading();
+                                view_Status.setStatus(Status.ERROR);
+                            }
                             break;
                         default:
                     }
                 }
             }
-            if (baseEvent != null && Constant.CAP.equals(baseEvent.type) && getAdapter() != null) {
+            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
                 //子模块信息到了，要进行处理，把它加入列表里面
                 if (baseEvent.content.startsWith("嵌")) {
                     CookieBar.builder(getActivity())
@@ -196,11 +218,13 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                             .setLayoutGravity(Gravity.BOTTOM)
                             .setAction(R.string.known, null)
                             .show();
+                } else
+                    if(getAdapter() != null) {
+                    //准备将子模块加入列表中
+                    getPresenter().checkCapInfo(baseEvent.content, getAdapter());
+                } else {
+                    Logger.d("adapter还没初始化" + "消息为" + baseEvent.content);
                 }
-                //准备将子模块加入列表中
-                getPresenter().checkCapInfo(baseEvent.content, getAdapter());
-            } else {
-                Logger.d("adapter还没初始化" + "消息为" + baseEvent.content);
             }
         }
     }
@@ -234,7 +258,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         //new MaterialDialog.Builder(getContext())
         builder.iconRes(R.drawable.ic_watch_dialog_warning_red)
                 .title("提示")
-                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK) + "\r确定要切换吗")
+                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,"等待连接服务器ing") + "\n您确定要切换吗?")
                 .inputType(
                         InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .input(
@@ -265,6 +289,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 })
                 .cancelable(true)
                 .show();
+        showLoading();
     }
 
     /**

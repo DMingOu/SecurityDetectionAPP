@@ -20,7 +20,7 @@ import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
-import com.squareup.leakcanary.LeakCanary;
+//import com.squareup.leakcanary.LeakCanary;
 import com.xuexiang.xui.XUI;
 
 import java.util.Timer;
@@ -29,8 +29,8 @@ import java.util.TimerTask;
 
 
 /**
- * @author: ODM
- * @date: 2019/7/25
+ * author: ODM
+ * date: 2019/7/25
  */
 public class SecurityDetectionAPP extends Application {
 
@@ -40,12 +40,12 @@ public class SecurityDetectionAPP extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //LeakCanary内存泄漏检测初始化
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            //此过程专用于LeakCanary进行堆分析。在此过程中不应初始化应用程序。
-            return;
-        }
-        LeakCanary.install(this);
+//        //LeakCanary内存泄漏检测初始化
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            //此过程专用于LeakCanary进行堆分析。在此过程中不应初始化应用程序。
+//            return;
+//        }
+//        LeakCanary.install(this);
         //初始化UI框架
         XUI.init(this);
         XUI.debug(true);
@@ -69,14 +69,19 @@ public class SecurityDetectionAPP extends Application {
      * @return the web socket
      */
     private static WebSocket initWebSocket(String  urlString , String protocol ) {
-        Logger.d("开始连接WebSocket");
         AsyncHttpClient.getDefaultInstance().websocket(
                 urlString, "", new AsyncHttpClient.WebSocketConnectCallback() {
                     @Override
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
                             ex.printStackTrace();
-                            Logger.d("出问题？"+ex.getMessage());
+                            if(ex.getMessage() == null) {
+                                BaseEvent baseEvent = EventFactory.getInstance();
+                                baseEvent.type = Constant.STATUS;
+                                baseEvent.content = Constant.FAILURE;
+                                EventBusUtils.postSticky(baseEvent);
+                            }
+                            Logger.d("出问题了？！错误信息："+ex.getMessage());
                             return;
                          }
                         webSocket.setStringCallback(new com.koushikdutta.async.http.WebSocket.StringCallback() {
@@ -84,16 +89,21 @@ public class SecurityDetectionAPP extends Application {
                             public void onStringAvailable(String data) {
                                 Logger.d("回调信息:   " + data);
                                 //成功连接后，服务器会自动发送消息
-                                if(data.startsWith("连") || "SUCCESS".equals(data)) {
+                                if(data.startsWith("连") || Constant.SUCCESS.equals(data)) {
                                     BaseEvent baseEvent = EventFactory.getInstance();
                                     baseEvent.type = Constant.STATUS;
                                     baseEvent.content = Constant.SUCCESS;
-                                    EventBusUtils.post(baseEvent);
+                                    EventBusUtils.postSticky(baseEvent);
+                                } else if(Constant.FAILURE.equals(data)) {
+                                    BaseEvent baseEvent = EventFactory.getInstance();
+                                    baseEvent.type = Constant.STATUS;
+                                    baseEvent.content = Constant.FAILURE;
+                                    EventBusUtils.postSticky(baseEvent);
                                 } else {
                                     BaseEvent baseEvent = EventFactory.getInstance();
                                     baseEvent.type = "CAP";
                                     baseEvent.content = data;
-                                    EventBusUtils.post(baseEvent);
+                                    EventBusUtils.postSticky(baseEvent);
                                 }
                             }
                         });
@@ -107,7 +117,6 @@ public class SecurityDetectionAPP extends Application {
                         mWebsocket = webSocket;
                         // webSocket获取成功后，会覆盖之前的 地址存储
                         SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.WEBSOCK ,urlString);
-//                        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.PROTOCOL , protocol);
                     }
                 });
 

@@ -69,29 +69,23 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     CommonTitleBar tbLocation;
     @BindView(R.id.iv_background_location)
     ImageView iv_background;
-    private static final int REQUEST_CODE_GALLERY = 0x10;           // 图库选取图片标识请求码
-    private static final int CROP_PHOTO = 0x12;                     // 裁剪图片标识请求码
-    private static final int STORAGE_PERMISSION = 0x20;              // 动态申请存储权限标识
-
     @BindView(R.id.view_normal)
     normalMarkerView marker_normal;
-
     @BindView(R.id.fab_loading)
     FloatingActionButton fabLoading;
-
     @BindView(R.id.fab_switch)
     FloatingActionButton fabSwitch;
-
     @BindView(R.id.fab_loaction_menu)
     FloatingActionMenu fabMenu;
     @BindView(R.id.fab_clearAll)
     FloatingActionButton fabClearAll;
-    private File imageFile = null;// 声明File对象
-    private Uri imageUri = null;// 裁剪后的图片uri
+    private static final int REQUEST_CODE_GALLERY = 0x10;           // 图库选取图片标识请求码
+    private static final int CROP_PHOTO = 0x12;                     // 裁剪图片标识请求码
+    private static final int STORAGE_PERMISSION = 0x20;              // 动态申请存储权限标识
+    private File imageFile = null;                                  // 声明File对象
+    private Uri imageUri = null;                                    // 裁剪后的图片uri
     private String imagePath = "";
     private String imageName = "";
-
-    Unbinder unbinder;
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
@@ -105,19 +99,18 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_location, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         initViews();
-        if (checkMarkerStatus()) {
-            marker_normal.setVisibility(View.VISIBLE);
-        }
         return view;
     }
 
     /**
      * Init views.
      */
-    public void initViews() {
-
+     private void initViews() {
+        if (checkMarkerStatus()) {
+            marker_normal.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -185,9 +178,26 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         //每次重新进入此页面才加载的内容
         if (imageUri != null) {
             displayImage(imageUri);
-            loadingbar.setVisibility(View.GONE);
+            hideLoading();
         } else {
+            showLoading();
+        }
+    }
+
+    @Override
+    public void showLoading() {
+        super.showLoading();
+        if(loadingbar.getVisibility() != View.VISIBLE){
+            Logger.d("启动Loader");
             loadingbar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideLoading() {
+        super.hideLoading();
+        if(loadingbar.getVisibility() != View.GONE){
+            loadingbar.setVisibility(View.GONE);
         }
     }
 
@@ -195,7 +205,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      * Select back ground.
      * 用户选择本地图片设置成背景
      */
-    public void selectBackGround() {
+    private void selectBackGround() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // 以startActivityForResult的方式启动一个activity用来获取返回的结果
         startActivityForResult(intent, REQUEST_CODE_GALLERY);
@@ -248,7 +258,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     try {
                         if (imageUri != null) {
                             displayImage(imageUri);
-                            loadingbar.setVisibility(View.GONE);
+                            hideLoading();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -357,13 +367,20 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     }
 
 
+    /**
+     * 删除本地管理器指定图片（目前无效）
+     *
+     * @param localPath the local path
+     * @param context   the context
+     */
     public  void deletePicture(String localPath, Context context) {
         if(!TextUtils.isEmpty(localPath)){
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             ContentResolver contentResolver = context.getContentResolver();
             String url = MediaStore.Images.Media.DATA + "=?";
             int deleteRows = contentResolver.delete(uri, url, new String[]{localPath});
-            if (deleteRows == 0) {//当生成图片时没有通知(插入到）媒体数据库，那么在图库里面看不到该图片，而且使用contentResolver.delete方法会返回0，此时使用file.delete方法删除文件
+            if (deleteRows == 0) {
+                //当生成图片时没有通知(插入到）媒体数据库，那么在图库里面看不到该图片，而且使用contentResolver.delete方法会返回0，此时使用file.delete方法删除文件
                 File file = new File(localPath);
                 if (file.exists()) {
                     file.delete();
@@ -390,6 +407,4 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             return false;
         }
     }
-
-
 }

@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * The type Home model.
+ * 监控页面 Model层
  *
- * @author: ODM
- * @date: 2019 /7/25
+ * author: ODM
+ * date: 2019 /7/25
  */
 public class watchModel extends BaseModel<watchPresenter> implements watchContract.Model {
 
@@ -101,9 +101,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     /*
      *  将反馈对象包装成 JSON 发送给 服务器
      *  请求类型：搜救
-     *
      */
-
     @Override
     public void  sendCallBack (String address) {
         callBackInfo mCallBack = new callBackInfo(false,true,address,"");
@@ -130,7 +128,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
 //        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
         //匹配 以 ws 开头，且字符串包含 websocket 的地址
         if(isMatch) {
-            ToastUtil.showLongToastCenter("连接中");
+//            ToastUtil.showLongToastCenter("连接中");
             newSocket = SecurityDetectionAPP.getWebSocket(newUrl , "");
             if (newSocket == null) {
                 ToastUtil.showLongToastCenter("切换服务器失败");

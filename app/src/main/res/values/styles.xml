@@ -9,10 +9,10 @@
     </style>
 
     <style name="StatusView.Custom">
-        <item name="sv_complete">@layout/sv_layout_complete</item>
-        <item name="sv_error">@layout/sv_layout_error</item>
-        <item name="sv_loading">@layout/sv_layout_loading</item>
-        <item name="sv_custom">@layout/sv_layout_custom</item>
+        <item name="sv_complete">@layout/view_status_complete</item>
+        <item name="sv_error">@layout/view_status_error</item>
+        <item name="sv_loading">@layout/view_status_loading</item>
+        <item name="sv_custom">@layout/view_status_custom</item>
     </style>
 
     <style name="bnve">

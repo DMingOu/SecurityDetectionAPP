@@ -19,8 +19,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 /**
- * @author: ODM
- * @date: 2019/7/25
+ * author: ODM
+ * date: 2019/7/25
  */
 public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment implements IBaseView {
 
@@ -64,7 +64,7 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
 
     @Override
     public void onDestroy() {
-        hideLoading();
+
         super.onDestroy();
         //在生命周期结束时，将 presenter 与 view 之间的联系断开，防止出现内存泄露
         if (mPresenter != null) {
@@ -129,7 +129,6 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
             //数据加载完毕,恢复标记,防止重复加载
             isViewCreated = false;
             isUiVisible = false;
-
         }
     }
 

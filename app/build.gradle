@@ -8,8 +8,8 @@ android {
         applicationId "com.example.odm.securitydetectionapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.1"
+        versionCode 7
+        versionName "1.0.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -65,7 +65,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
-    // add  greendao library
+    // GreenDao数据库框架
     implementation 'org.greenrobot:greendao:3.2.2'
     //万能适配器
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
@@ -99,10 +99,10 @@ dependencies {
     //底部导航栏
     implementation 'com.yinglan.alphatabs:library:1.0.8'
 
-    //内存泄漏检测
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
+//    //内存泄漏检测
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
 
     //打包下载平台
     implementation files('libs/OpenInstall_v2.2.2.jar')

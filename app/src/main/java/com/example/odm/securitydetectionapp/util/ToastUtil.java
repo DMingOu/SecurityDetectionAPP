@@ -1,6 +1,8 @@
 package com.example.odm.securitydetectionapp.util;
 
 /**
+ * Toast工具类
+ *
  * @author: ODM
  * @date: 2019/7/25
  */
