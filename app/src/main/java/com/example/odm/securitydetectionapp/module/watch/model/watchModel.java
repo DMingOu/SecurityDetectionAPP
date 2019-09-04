@@ -106,7 +106,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     public void  sendCallBack (String address) {
         callBackInfo mCallBack = new callBackInfo(false,true,address,"");
         String callBackJsonString = GsonUtil.GsonString(mCallBack);
-        Logger.d(callBackJsonString);
+        Logger.d("反馈"+callBackJsonString);
 
         if(webSocket != null) {
             webSocket.send(callBackJsonString);

@@ -4,6 +4,7 @@ import com.example.odm.securitydetectionapp.bean.callBackInfo;
 import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
 import com.example.odm.securitydetectionapp.util.GsonUtil;
+import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.orhanobut.logger.Logger;
 
 /**
@@ -37,5 +38,11 @@ public class locationModel implements locationContract.Model {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean saveImage(String imageName) {
+        SharedPreferencesUtils.getInstance().putString(SharedPreferencesUtils.IMAGENAME , imageName);
+        return true;
     }
 }

@@ -15,9 +15,9 @@ public  class PointManager  {
 
     private static List<normalMarkerView.currentPoint> mPointList = new ArrayList<>();
 
-    private static List<String>  mCoordinatesList = new ArrayList<>();
+    private  static List<String>  mCoordinatesList = new ArrayList<>();
 
-    private static List<String>  mAbnormalList = new ArrayList<>();
+    private  static List<String>  mAbnormalList = new ArrayList<>();
 
      public static List<normalMarkerView.currentPoint> getPointList() {
             if(mPointList == null) {
@@ -59,6 +59,16 @@ public  class PointManager  {
     public static void setAbnormalList(List<String> mList) {
         mAbnormalList.clear();
         mAbnormalList.addAll(mList);
+    }
+
+    public static boolean  checkPointListCount() {
+        if (PointManager.getPointList().size() > 0) {
+            //normalMarkerView会在画图时将坐标存PointManger,如果size大于0
+            //说明已经开标注模式，标注过点了，那么已经在加载页面时将上次离开页面时的点加载出来
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

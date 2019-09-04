@@ -1,5 +1,6 @@
 package com.example.odm.securitydetectionapp.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,6 +22,12 @@ public class TimeUtil {
         Date date = new Date(currentTime);
         String time = simpleDateFormat.format(date);
         return time;
+    }
+
+    public static String transformToString(Long milliseconds) {
+        Date date = new Date(Long.parseLong(milliseconds+""));
+        SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return simpleDateFormat.format(date);
     }
 
 

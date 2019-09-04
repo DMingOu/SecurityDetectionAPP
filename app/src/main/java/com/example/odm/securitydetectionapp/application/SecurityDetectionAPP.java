@@ -53,6 +53,7 @@ public class SecurityDetectionAPP extends Application {
         Logger.addLogAdapter(new AndroidLogAdapter());
         initWebSocket("ws://192.168.1.138:8888/websocket" , "");
         initGreenDao();
+        //初始化集成下载平台
         if (isMainProcess()) {
             OpenInstall.init(this);
         }

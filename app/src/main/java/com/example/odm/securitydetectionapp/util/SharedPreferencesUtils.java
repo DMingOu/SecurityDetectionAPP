@@ -135,5 +135,6 @@ public class SharedPreferencesUtils {
     // 所有的Key 以为常量的形式保存在此类里面
     public static final String WEBSOCK = "websocket";
     public static final String PROTOCOL = "protocol";
+    public static final String IMAGENAME = "imagename";
 
 }

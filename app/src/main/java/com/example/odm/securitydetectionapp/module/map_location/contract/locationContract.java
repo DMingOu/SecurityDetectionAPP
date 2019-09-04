@@ -22,6 +22,8 @@ public interface locationContract {
          * @return the boolean
          */
         boolean  handleCallBack (String  callbackString);
+
+        boolean  saveImage(String imageName);
     }
 
     /**
@@ -50,5 +52,7 @@ public interface locationContract {
          * Handle call back success.
          */
         void  handleCallBackSuccess();
+
+        boolean  saveImage(String imageName);
     }
 }

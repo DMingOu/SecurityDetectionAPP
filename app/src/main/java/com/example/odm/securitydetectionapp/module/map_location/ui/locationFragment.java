@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.example.odm.securitydetectionapp.R;
+import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.Constant;
@@ -33,6 +34,8 @@ import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
 import com.example.odm.securitydetectionapp.module.map_location.presenter.locationPresenter;
+import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
+import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -71,7 +74,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     ImageView iv_background;
     @BindView(R.id.view_normal)
     normalMarkerView marker_normal;
-    @BindView(R.id.fab_loading)
+    @BindView(R.id.fab_load_background)
     FloatingActionButton fabLoading;
     @BindView(R.id.fab_switch)
     FloatingActionButton fabSwitch;
@@ -107,8 +110,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     /**
      * Init views.
      */
-     private void initViews() {
-        if (checkMarkerStatus()) {
+    private void initViews() {
+        if (PointManager.checkPointListCount()) {
             marker_normal.setVisibility(View.VISIBLE);
         }
     }
@@ -118,10 +121,11 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      *
      * @param v the v
      */
-    @OnClick({R.id.fab_loading, R.id.fab_switch, R.id.fab_clearAll})
+    @OnClick({R.id.fab_load_background, R.id.fab_switch, R.id.fab_clearAll})
     void onClick(View v) {
         switch (v.getId()) {
-            case R.id.fab_loading:
+            case R.id.fab_load_background:
+                //用户选择加载背景图
                 selectBackGround();
                 break;
             case R.id.fab_clearAll:
@@ -129,7 +133,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 break;
             case R.id.fab_switch:
                 if (imageUri == null) {
-                    ToastUtil.showLongToastCenter("\r当前未设置背景图，无法开启标注模式!");
+                    ToastUtil.showLongToastCenter("当前未设置背景图，无法开启标注模式!");
                     break;
                 }
                 if (!isEditted) {
@@ -176,19 +180,23 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     protected void lazyLoadData() {
         //每次重新进入此页面才加载的内容
+        imageName = SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.IMAGENAME, "");
         if (imageUri != null) {
             displayImage(imageUri);
             hideLoading();
-        } else {
+        } else if (!"".equals(imageName)) {
+            imageFile = new File(Environment.getExternalStorageDirectory(), imageName);
+            imageUri = Uri.fromFile(imageFile);
+            displayImage(imageUri);
             showLoading();
-        }
-    }
+       }
+     }
+
 
     @Override
     public void showLoading() {
         super.showLoading();
         if(loadingbar.getVisibility() != View.VISIBLE){
-            Logger.d("启动Loader");
             loadingbar.setVisibility(View.VISIBLE);
         }
     }
@@ -244,8 +252,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     if (imageFile != null) {
                         imageUri = Uri.fromFile(imageFile);
                         //把裁剪后的图片从本地删除掉，原图不变
-                        deletePicture(imagePath,getContext());
-                        Logger.d("再次执行文件删除");
+//                        deletePicture(imagePath,getContext());
+//                        Logger.d("再次执行文件删除");
                     }
                     if (imageUri != null) {
                         intent_gallery_crop.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -254,11 +262,12 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     startActivityForResult(intent_gallery_crop, CROP_PHOTO);
                     break;
                 case CROP_PHOTO:
-                    // 裁剪图片
+                    // 裁剪图片后的回调
                     try {
-                        if (imageUri != null) {
+                        if (imageUri != null && ! "".equals(imageName)) {
                             displayImage(imageUri);
                             hideLoading();
+                            saveImage(imageName);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -287,13 +296,14 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             if (imageFile != null && imageFile.exists()) {
                 imageFile.delete();
                 imageFile.deleteOnExit();
-                Logger.d("执行文件删除");
-                deletePicture(imagePath,getContext());
+//                Logger.d("执行文件删除");
+//                deletePicture(imagePath,getContext());
             }
-            // 新建文件
-            imageName = System.currentTimeMillis()+"background.jpg";
+            // 新建一张图片文件
+            imageName = TimeUtil.transformToString(System.currentTimeMillis())+ "SecurityDetectionAPPBackground.jpg";
             imageFile = new File(Environment.getExternalStorageDirectory(), imageName);
             imagePath = "/storage/emulated/0/"+imageName;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -311,14 +321,24 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             Glide.with(this)
                     .load(imageUri)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    // 占位图设置：加载过程中显示的图片
-                    .placeholder(R.mipmap.ic_launcher_round)
+//                     占位图设置：加载过程中显示的图片
+//                    .placeholder(R.mipmap.ic_map_load)
                     // 异常占位图
                     .error(R.mipmap.ic_launcher_round)
                     .transform(new CenterCrop())
                     .into(iv_background);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private void saveImage(String imageName) {
+        if(getPresenter().saveImage(imageName)) {
+            Logger.d("存储图片成功");
+            ToastUtil.showShortToastBottom("保存图片成功");
+        } else {
+            ToastUtil.showShortToastBottom("保存图片失败");
         }
 
     }
@@ -392,19 +412,4 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         }
     }
 
-
-    /**
-     * Check marker status boolean.
-     *
-     * @return the boolean
-     */
-    public boolean checkMarkerStatus() {
-        if (PointManager.getPointList().size() > 0) {
-            //normalMarkerView会在画图时将坐标存PointManger,如果size大于0
-            //说明已经开标注模式，标注过点了，那么已经在加载页面时将上次离开页面时的点加载出来
-            return true;
-        } else {
-            return false;
-        }
-    }
 }

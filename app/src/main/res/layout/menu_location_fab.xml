@@ -27,7 +27,7 @@
         app:fab_label="开启标注模式"/>
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/fab_loading"
+        android:id="@+id/fab_load_background"
         style="@style/FabMenu.Buttons"
         android:src="@mipmap/insert_background"
         app:fab_label="加载背景图片"/>

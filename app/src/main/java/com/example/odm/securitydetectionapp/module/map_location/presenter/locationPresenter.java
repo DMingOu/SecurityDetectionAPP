@@ -36,4 +36,9 @@ public class locationPresenter extends BasePresenter<locationContract.View>imple
     public void handleCallBackSuccess() {
         getView().updateAbnormalList();
     }
+
+    @Override
+    public boolean saveImage(String imageName) {
+        return mlocationModel.saveImage(imageName);
+    }
 }
