@@ -34,6 +34,7 @@ public class locationModel implements locationContract.Model {
             } else {
                 PointManager.getAbnormalList().add(mCallBackInfo.getMessage());
                 Logger.d("地图异常坐标：   "+ mCallBackInfo.getMessage());
+                //成功加入后返回true，刷新页面
                 return true;
             }
         }

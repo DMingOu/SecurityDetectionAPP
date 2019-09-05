@@ -29,7 +29,9 @@ import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
+import com.example.odm.securitydetectionapp.bean.BaseStation;
 import com.example.odm.securitydetectionapp.common.Constant;
+import com.example.odm.securitydetectionapp.core.PageStatusManager;
 import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
@@ -64,6 +66,8 @@ import static android.app.Activity.RESULT_OK;
  */
 public class locationFragment<P extends IBasePresenter> extends BaseFragment<locationPresenter> implements locationContract.View {
 
+
+    private static final String TAG = "locationFragment";
     @BindView(R.id.loading)
     MKLoader loadingbar;
     @BindView(R.id.rmv_locate)
@@ -92,10 +96,14 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
+    private BaseStation baseStation = new BaseStation(0.5 , 0.5 , 0.5);
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestStoragePermission();
+
     }
 
     @Nullable
@@ -104,8 +112,13 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         View view = inflater.inflate(R.layout.fragment_location, container, false);
         ButterKnife.bind(this, view);
         initViews();
+        //假设背景图片已经加载好后，就出现三个基站
+        PointManager.setBaseStation(baseStation);
+
         return view;
     }
+
+
 
     /**
      * Init views.
@@ -167,8 +180,10 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
-        if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
-            getPresenter().handleCallBack(baseEvent.content);
+        if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
+                getPresenter().handleCallBack(baseEvent.content);
+            }
         }
     }
 
@@ -180,6 +195,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     protected void lazyLoadData() {
         //每次重新进入此页面才加载的内容
+
         imageName = SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.IMAGENAME, "");
         if (imageUri != null) {
             displayImage(imageUri);
@@ -188,8 +204,10 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             imageFile = new File(Environment.getExternalStorageDirectory(), imageName);
             imageUri = Uri.fromFile(imageFile);
             displayImage(imageUri);
+            hideLoading();
+       } else {
             showLoading();
-       }
+        }
      }
 
 
@@ -268,6 +286,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                             displayImage(imageUri);
                             hideLoading();
                             saveImage(imageName);
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -284,7 +303,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      */
     @Override
     public void updateAbnormalList() {
-
         marker_normal.invalidate();
     }
 

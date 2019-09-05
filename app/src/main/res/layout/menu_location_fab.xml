@@ -24,7 +24,7 @@
         android:id="@+id/fab_switch"
         style="@style/FabMenu.Buttons"
         android:src="@mipmap/switch_edit"
-        app:fab_label="开启标注模式"/>
+        app:fab_label="开启定位功能"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_load_background"

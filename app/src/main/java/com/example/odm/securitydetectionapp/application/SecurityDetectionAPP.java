@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.odm.securitydetectionapp.common.Constant;
+import com.example.odm.securitydetectionapp.core.DataManager;
 import com.example.odm.securitydetectionapp.core.GreenDaoManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
@@ -76,11 +77,8 @@ public class SecurityDetectionAPP extends Application {
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
                             ex.printStackTrace();
-                            if(ex.getMessage() == null) {
-                                BaseEvent baseEvent = EventFactory.getInstance();
-                                baseEvent.type = Constant.STATUS;
-                                baseEvent.content = Constant.FAILURE;
-                                EventBusUtils.postSticky(baseEvent);
+                            if(ex.getMessage() != null) {
+                                DataManager.sendConnectErrorEvent();
                             }
                             Logger.d("出问题了？！错误信息："+ex.getMessage());
                             return;
@@ -90,22 +88,7 @@ public class SecurityDetectionAPP extends Application {
                             public void onStringAvailable(String data) {
                                 Logger.d("回调信息:   " + data);
                                 //成功连接后，服务器会自动发送消息
-                                if(data.startsWith("连") || Constant.SUCCESS.equals(data)) {
-                                    BaseEvent baseEvent = EventFactory.getInstance();
-                                    baseEvent.type = Constant.STATUS;
-                                    baseEvent.content = Constant.SUCCESS;
-                                    EventBusUtils.postSticky(baseEvent);
-                                } else if(Constant.FAILURE.equals(data)) {
-                                    BaseEvent baseEvent = EventFactory.getInstance();
-                                    baseEvent.type = Constant.STATUS;
-                                    baseEvent.content = Constant.FAILURE;
-                                    EventBusUtils.postSticky(baseEvent);
-                                } else {
-                                    BaseEvent baseEvent = EventFactory.getInstance();
-                                    baseEvent.type = "CAP";
-                                    baseEvent.content = data;
-                                    EventBusUtils.postSticky(baseEvent);
-                                }
+                                DataManager.dataRoute(data);
                             }
                         });
                         webSocket.setDataCallback(new DataCallback() {

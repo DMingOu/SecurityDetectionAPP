@@ -21,6 +21,7 @@ import com.example.odm.securitydetectionapp.common.Constant;
 
 import com.example.odm.securitydetectionapp.common.PopupWindowList;
 import com.example.odm.securitydetectionapp.common.emptyView;
+import com.example.odm.securitydetectionapp.core.PageStatusManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
@@ -54,7 +55,7 @@ import butterknife.Unbinder;
  */
 public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchPresenter> implements watchContract.View {
 
-
+    private static final String TAG = "watchFragment";
     @BindView(R.id.status)
     StatusView view_Status;
     @BindView(R.id.tb_home)
@@ -71,7 +72,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -82,6 +82,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         currentVisity = true;
         initViews();
         initToolbar();
+
         return view;
     }
 
@@ -187,7 +188,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         super.handleEvent(baseEvent);
         //对 事件类型为 请求状态 处理事件
         //若当前页面为隐藏页面，则不接收服务器发来的信息
-        if (currentVisity) {
+        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
             if (baseEvent != null && Constant.STATUS.equals(baseEvent.type)) {
                 if (view_Status != null) {
                     switch (baseEvent.content) {
@@ -232,6 +233,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     @Override
     protected void lazyLoadData() {
         //需要每次进入页面才加载的内容
+        //Todo 方法在监控页面无效，暂无解决
     }
 
 

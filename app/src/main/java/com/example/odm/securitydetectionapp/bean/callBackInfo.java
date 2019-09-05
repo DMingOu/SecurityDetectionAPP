@@ -9,13 +9,11 @@ import org.greenrobot.greendao.annotation.Generated;
  * @author: ODM
  * @date: 2019/7/25
  */
-@Entity
+
 public class callBackInfo {
 
     /**
-     * 手机反馈给服务器(->帽子)的消息
-     * address : 020A
-     * command : loacte
+     * 手机反馈给服务器(->帽子)的消息  && 服务器反馈给地图页面的信息
      */
 
     private String address;
@@ -30,15 +28,7 @@ public class callBackInfo {
         this.message = message;
     }
 
-    @Generated(hash = 1253786788)
-    public callBackInfo(String address, String message, boolean locate, boolean rescue) {
-        this.address = address;
-        this.message = message;
-        this.locate = locate;
-        this.rescue = rescue;
-    }
 
-    @Generated(hash = 1481418400)
     public callBackInfo() {
     }
 

@@ -10,11 +10,13 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.odm.securitydetectionapp.R;
+import com.example.odm.securitydetectionapp.core.PageStatusManager;
 import com.example.odm.securitydetectionapp.module.history.ui.historyFragment;
 import com.example.odm.securitydetectionapp.module.watch.ui.watchFragment;
 import com.example.odm.securitydetectionapp.module.map_location.ui.locationFragment;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 
+import com.orhanobut.logger.Logger;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 
 import java.util.ArrayList;
@@ -43,13 +45,13 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initData();
+        initViewPager();
         view_vp.setCurrentItem(1);
     }
 
 
     // 添加页面,初始化ViewPager
-    private void initData() {
+    private void initViewPager() {
         fragmentList = new ArrayList<Fragment>(3);
         fragmentList.add(new historyFragment<>());
         fragmentList.add(new watchFragment<>());
@@ -57,7 +59,25 @@ public class MainActivity extends FragmentActivity {
         vpAdapter = new VpAdapter(getSupportFragmentManager(), fragmentList);
         view_vp.setAdapter(vpAdapter);
         bottomTab.setViewPager(view_vp);
-
+        //viewpager监听页面的跳转
+        view_vp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+            @Override
+            public void onPageSelected(int position) {
+                if(position == 0) {
+                    PageStatusManager.setPageStatus(PageStatusManager.PAGE_HISTORY_CURENT);
+                } else if(position == 1) {
+                    PageStatusManager.setPageStatus(PageStatusManager.PAGE_WATCH_CURRENT);
+                } else if(position == 2) {
+                    PageStatusManager.setPageStatus(PageStatusManager.PAGE_LOCATION_CURRENT);
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
 

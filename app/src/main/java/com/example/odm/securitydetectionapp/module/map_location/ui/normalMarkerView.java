@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.core.PointManager;
+import com.example.odm.securitydetectionapp.util.CoordinateCalculateUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.orhanobut.logger.Logger;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
@@ -50,6 +51,9 @@ public class normalMarkerView  extends View {
     public float currentY = 50;
     private Bitmap bmp_normal;
     private Bitmap bmp_abnormal;
+    private Bitmap bmp_base_station;
+    private int mWidth, mHeight;
+    double[] baseStation3Th;
     Paint mPaint;
     Paint mPaint_red;
     //存储用户触碰坐标的列表
@@ -87,9 +91,11 @@ public class normalMarkerView  extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        mWidth = w;
+        mHeight = h;
     }
 
-    //初始化你需要显示的光标样式 和 存储点
+    //初始化你需要显示的光标样式 和 存储点，会在页面初始化时执行一次
     private void init() {
         builder  = new MaterialDialog.Builder(getContext());
         points = new ArrayList<>();
@@ -97,9 +103,10 @@ public class normalMarkerView  extends View {
         coordinatesList = new ArrayList<>();
         coordinatesList.addAll(PointManager.getCoordinatesLis());
         abnormalList = new ArrayList<>();
-        if (bmp_normal == null || bmp_abnormal == null) {
+        if (bmp_normal == null || bmp_abnormal == null || bmp_base_station == null) {
             bmp_normal = BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_normal);
             bmp_abnormal = BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_marker_abnormal);
+            bmp_base_station = BitmapFactory.decodeResource(getResources() ,R.mipmap.warning_yellow);
         }
         Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
         float fontTotalHeight = fontMetrics.bottom - fontMetrics.top;
@@ -109,8 +116,9 @@ public class normalMarkerView  extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
+
         //用背景图是否存在阻隔了自动画的点
-        if (bmp_normal != null && bmp_abnormal != null) {
+        if (bmp_normal != null && bmp_abnormal != null && bmp_base_station != null) {
             //将坐标列表去重再使用，减少遍历次数
             //abnormalList = PointManager.getAbnormalList().stream().distinct().collect(Collectors.toList());
             abnormalList = removeDuplicate(PointManager.getAbnormalList());
@@ -136,6 +144,22 @@ public class normalMarkerView  extends View {
                         canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint);
                     }
                 }
+            }
+            //初始化第三个基站在屏幕坐标系的坐标
+            if(PointManager.getBaseStation() != null) {
+                baseStation3Th = CoordinateCalculateUtil.calcaulatePoint3TH
+                        (PointManager.getBaseStation().getRelativePathAB(),
+                                PointManager.getBaseStation().getRelativePathAC(),
+                                PointManager.getBaseStation().getRelativePathBC(),0 ,0);
+                baseStation3Th[0] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[0] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+                baseStation3Th[1] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[1] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+            }
+            if(baseStation3Th != null && baseStation3Th[0] > 0 && baseStation3Th[1] > 0) {
+                // 画上基站的标记
+                canvas.drawBitmap(bmp_base_station , 0 , 0 , mPaint);
+                canvas.drawBitmap(bmp_base_station ,mWidth - bmp_base_station.getWidth() ,0 ,mPaint);
+                canvas.drawBitmap(bmp_base_station ,((float) baseStation3Th[0]) - bmp_base_station.getWidth()/2 , (float) baseStation3Th[1] ,mPaint);
+                Logger.d("第三个基站的坐标 x：" + baseStation3Th[0] +"   y: "+ baseStation3Th[1]);
             }
         }
         super.onDraw(canvas);
@@ -224,5 +248,7 @@ public class normalMarkerView  extends View {
         list.addAll(set);
         return list;
     }
+
+
 }
 

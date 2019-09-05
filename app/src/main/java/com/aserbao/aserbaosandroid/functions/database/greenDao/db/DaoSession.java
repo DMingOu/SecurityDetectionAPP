@@ -8,11 +8,9 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
-import com.example.odm.securitydetectionapp.bean.callBackInfo;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.history.bean.historyErrorMsg;
 
-import com.aserbao.aserbaosandroid.functions.database.greenDao.db.callBackInfoDao;
 import com.aserbao.aserbaosandroid.functions.database.greenDao.db.capInfoDao;
 import com.aserbao.aserbaosandroid.functions.database.greenDao.db.historyErrorMsgDao;
 
@@ -25,11 +23,9 @@ import com.aserbao.aserbaosandroid.functions.database.greenDao.db.historyErrorMs
  */
 public class DaoSession extends AbstractDaoSession {
 
-    private final DaoConfig callBackInfoDaoConfig;
     private final DaoConfig capInfoDaoConfig;
     private final DaoConfig historyErrorMsgDaoConfig;
 
-    private final callBackInfoDao callBackInfoDao;
     private final capInfoDao capInfoDao;
     private final historyErrorMsgDao historyErrorMsgDao;
 
@@ -37,32 +33,22 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
-        callBackInfoDaoConfig = daoConfigMap.get(callBackInfoDao.class).clone();
-        callBackInfoDaoConfig.initIdentityScope(type);
-
         capInfoDaoConfig = daoConfigMap.get(capInfoDao.class).clone();
         capInfoDaoConfig.initIdentityScope(type);
 
         historyErrorMsgDaoConfig = daoConfigMap.get(historyErrorMsgDao.class).clone();
         historyErrorMsgDaoConfig.initIdentityScope(type);
 
-        callBackInfoDao = new callBackInfoDao(callBackInfoDaoConfig, this);
         capInfoDao = new capInfoDao(capInfoDaoConfig, this);
         historyErrorMsgDao = new historyErrorMsgDao(historyErrorMsgDaoConfig, this);
 
-        registerDao(callBackInfo.class, callBackInfoDao);
         registerDao(capInfo.class, capInfoDao);
         registerDao(historyErrorMsg.class, historyErrorMsgDao);
     }
     
     public void clear() {
-        callBackInfoDaoConfig.clearIdentityScope();
         capInfoDaoConfig.clearIdentityScope();
         historyErrorMsgDaoConfig.clearIdentityScope();
-    }
-
-    public callBackInfoDao getCallBackInfoDao() {
-        return callBackInfoDao;
     }
 
     public capInfoDao getCapInfoDao() {

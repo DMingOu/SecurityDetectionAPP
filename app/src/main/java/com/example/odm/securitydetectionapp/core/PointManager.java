@@ -1,9 +1,13 @@
 package com.example.odm.securitydetectionapp.core;
 
+import android.graphics.Point;
 import android.util.ArrayMap;
 
+import com.example.odm.securitydetectionapp.bean.BaseStation;
 import com.example.odm.securitydetectionapp.module.map_location.ui.normalMarkerView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +23,16 @@ public  class PointManager  {
 
     private  static List<String>  mAbnormalList = new ArrayList<>();
 
+    private static BaseStation baseStation ;
+
+    //存放 三角定位后算法得出的模块的 x y
+    private static double[] point = new double[2];
      public static List<normalMarkerView.currentPoint> getPointList() {
             if(mPointList == null) {
                 mPointList = new ArrayList<>();
                 return  mPointList;
             }
             return mPointList;
-
     }
 
     public static List<String> getCoordinatesLis() {
@@ -61,6 +68,15 @@ public  class PointManager  {
         mAbnormalList.addAll(mList);
     }
 
+    public static BaseStation getBaseStation() {
+        return baseStation;
+    }
+
+    public static void setBaseStation(BaseStation baseStation) {
+        PointManager.baseStation = baseStation;
+    }
+
+
     public static boolean  checkPointListCount() {
         if (PointManager.getPointList().size() > 0) {
             //normalMarkerView会在画图时将坐标存PointManger,如果size大于0
@@ -70,6 +86,10 @@ public  class PointManager  {
             return false;
         }
     }
+
+
+
+
 
 
 }
