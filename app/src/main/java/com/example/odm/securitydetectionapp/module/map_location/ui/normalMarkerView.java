@@ -147,18 +147,20 @@ public class normalMarkerView  extends View {
             }
             //初始化第三个基站在屏幕坐标系的坐标
             if(PointManager.getBaseStation() != null) {
-                baseStation3Th = CoordinateCalculateUtil.calcaulatePoint3TH
+                baseStation3Th = CoordinateCalculateUtil.calcaulate3ThPoint
                         (PointManager.getBaseStation().getRelativePathAB(),
                                 PointManager.getBaseStation().getRelativePathAC(),
-                                PointManager.getBaseStation().getRelativePathBC(),0 ,0);
+                                PointManager.getBaseStation().getRelativePathBC(),0 ,0,PointManager.getBaseStation().getRelativePathAB(),0);
                 baseStation3Th[0] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[0] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+
                 baseStation3Th[1] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[1] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
             }
-            if(baseStation3Th != null && baseStation3Th[0] > 0 && baseStation3Th[1] > 0) {
+            if(baseStation3Th != null && baseStation3Th[0] >= 0 && baseStation3Th[1] >= 0) {
                 // 画上基站的标记
                 canvas.drawBitmap(bmp_base_station , 0 , 0 , mPaint);
+                //如果让第二个基站默认在屏幕右顶点会被挡住，所以要左平移一点
                 canvas.drawBitmap(bmp_base_station ,mWidth - bmp_base_station.getWidth() ,0 ,mPaint);
-                canvas.drawBitmap(bmp_base_station ,((float) baseStation3Th[0]) - bmp_base_station.getWidth()/2 , (float) baseStation3Th[1] ,mPaint);
+                canvas.drawBitmap(bmp_base_station ,((float) baseStation3Th[0])  , (float) baseStation3Th[1] ,mPaint);
                 Logger.d("第三个基站的坐标 x：" + baseStation3Th[0] +"   y: "+ baseStation3Th[1]);
             }
         }

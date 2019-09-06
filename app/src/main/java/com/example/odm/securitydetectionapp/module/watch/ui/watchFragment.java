@@ -60,13 +60,10 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     StatusView view_Status;
     @BindView(R.id.tb_home)
     CommonTitleBar tb_Home;
-    Unbinder unbinder;
     @BindView(R.id.rv_module)
     RecyclerView rv_Module;
-
     private capInfoAdapter mAdapter;
     private List<capInfo> mCapList;
-    private boolean  currentVisity;
     MaterialDialog.Builder builder;
     private PopupWindowList mPopupWindowList;
     @Override
@@ -78,8 +75,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder = ButterKnife.bind(this, view);
-        currentVisity = true;
+        ButterKnife.bind(this, view);
         initViews();
         initToolbar();
 
@@ -237,16 +233,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     }
 
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            currentVisity = false;
-        } else {
-            // 可视
-            currentVisity = true;
-        }
-    }
 
     @Override
     public capInfoAdapter getAdapter() {

@@ -50,6 +50,31 @@ public class CoordinateCalculateUtil {
         return  A;
     }
 
+    public static double[] calcaulate3ThPoint(double a ,double b ,double c ,double xA ,double yA ,double xB ,double yB) {
+        double timeCut1 = System.currentTimeMillis();
+        double thetaA;
+        thetaA = Math.acos((b * b + c * c - a * a) / (2 *b * c));
+        double    thetaAB = Math.atan((yB - yA)/(xB - xA));
+        double   thetaAC = thetaA - thetaAB;
+        double  xC ;
+        if(thetaAC * 180 / Math.PI == 90) {
+            //c点在A点正上方
+            xC = xA;
+        } else {
+            xC = xA + b * Math.cos(thetaAC);
+        }
+        double  yC = yA + b * Math.sin(Math.PI - thetaAC);
+        System.out.println(xC);
+        System.out.println(yC);
+        double timeCut2 = System.currentTimeMillis();
+        double  time = timeCut2 - timeCut1;
+        System.out.println("MethodA方法耗时： "+ time + "  ms");
+        double[] C = new double[2];
+        C[0] = xC;
+        C[1] = yC;
+        return  C;
+    }
+
     /**
      * 需要参数，需要三个基站的坐标x、y 和 基站与模块的位置 r
      */

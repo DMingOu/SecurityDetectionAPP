@@ -96,7 +96,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
-    private BaseStation baseStation = new BaseStation(0.5 , 0.5 , 0.5);
+    private BaseStation baseStation = new BaseStation(0.5 , 0.3 , 0.4);
 
 
     @Override
@@ -146,23 +146,28 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 break;
             case R.id.fab_switch:
                 if (imageUri == null) {
-                    ToastUtil.showLongToastCenter("当前未设置背景图，无法开启标注模式!");
+                    ToastUtil.showLongToastCenter("当前未设置背景图，无法开启定位功能");
                     break;
-                }
-                if (!isEditted) {
-                    //准备开启标注模式
-                    marker_normal.setEditted(true);
-                    if (marker_normal.getVisibility() == View.INVISIBLE) {
-                        marker_normal.setVisibility(View.VISIBLE);
-                    }
-                    fabSwitch.setLabelText("关闭标注模式");
-                    isEditted = true;
                 } else {
-                    //准备关闭标注模式
-                    marker_normal.setEditted(false);
-                    fabSwitch.setLabelText("开启标注模式");
-                    isEditted = false;
+                    marker_normal.setVisibility(View.VISIBLE);
+                    marker_normal.invalidate();
                 }
+
+//                if (!isEditted) {
+//                    //准备开启标注模式
+//                    marker_normal.setEditted(true);
+//                    if (marker_normal.getVisibility() == View.INVISIBLE) {
+//                        marker_normal.setVisibility(View.VISIBLE);
+//                    }
+//                    fabSwitch.setLabelText("关闭标注模式");
+//                    isEditted = true;
+//                } else {
+//                    //准备关闭标注模式
+//                    marker_normal.setEditted(false);
+//                    fabSwitch.setLabelText("开启标注模式");
+//                    isEditted = false;
+//                }
+
                 break;
             default:
         }
