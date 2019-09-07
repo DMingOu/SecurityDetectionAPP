@@ -17,9 +17,9 @@ public class capInfo {
     @Id(autoincrement = true)
     Long ID;
     /**
-     * address : 020A
-     * data : 摔倒了
-     * status : true
+     * address : 020A  模块的地址
+     * data : 摔倒了   当data 为空，则此模块处于正常状态，当data 非空字符串，则此模块处于异常状态，异常信息为 data值
+     * status : true  当status 为true说明此模块信息为真实模块(具有正常或异常状态)
      */
 
     private String address;

@@ -28,10 +28,9 @@ public class historyModel implements historyContract.Model {
         QueryBuilder<historyErrorMsg> qb = historyDaoSession.queryBuilder(historyErrorMsg.class);
         //先将之前的历史记录清空，再将最新的加入
         mList.clear();
-        adapter.setNewData(mList);
+        adapter.replaceData(mList);
         adapter.notifyDataSetChanged();
         mList.addAll(qb.list());
         adapter.addData(mList);
-        adapter.notifyDataSetChanged();
     }
 }

@@ -22,16 +22,16 @@ public class DataManager {
         } else if(Constant.FAILURE.equals(data)) {
             DataManager.sendConnectErrorEvent();
         } else {
-            if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
+
                 //发送服务器数据给监控页面，类型为 cap
                 BaseEvent baseEvent = EventFactory.getInstance();
                 baseEvent.type = "CAP";
                 baseEvent.content = data;
                 EventBusUtils.postSticky(baseEvent);
-            }
-            if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
-                //发送服务器数据给定位页面， 类型为 基站数据 ，模块数据
-            }
+
+//            if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+//                //发送服务器数据给定位页面， 类型为 基站数据 ，模块数据
+//            }
         }
     }
 

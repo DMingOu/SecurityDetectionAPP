@@ -10,7 +10,7 @@ public class BaseStation {
     double relativePathAC;
     double relativePathBC;
 
-    public BaseStation(double relativePathAB ,double relativePathAC ,double relativePathBC) {
+    public BaseStation(double relativePathBC ,double relativePathAC ,double relativePathAB) {
         this.relativePathAB = relativePathAB ;
         this.relativePathAC = relativePathAC;
         this.relativePathBC = relativePathBC;

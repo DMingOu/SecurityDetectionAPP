@@ -26,6 +26,7 @@ import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.bean.capInfo;
 import com.example.odm.securitydetectionapp.module.watch.contract.watchContract;
 import com.example.odm.securitydetectionapp.module.watch.presenter.watchPresenter;
+import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
@@ -78,12 +79,13 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         ButterKnife.bind(this, view);
         initViews();
         initToolbar();
-
+        getPresenter().checkCapInfo(GsonUtil.GsonString(new capInfo("060A","",true)), mAdapter);
+        getPresenter().checkCapInfo(GsonUtil.GsonString(new capInfo("160A","我好穷",true)), mAdapter);
         return view;
     }
 
 
-    public void initViews() {
+    private void initViews() {
         builder  = new MaterialDialog.Builder(getContext());
         mCapList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -183,9 +185,8 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
         //对 事件类型为 请求状态 处理事件
-        //若当前页面为隐藏页面，则不接收服务器发来的信息
-        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
-            if (baseEvent != null && Constant.STATUS.equals(baseEvent.type)) {
+        //监控页面出现的模块与定位功能的模块是同一个的，同时正常和异常
+            if (Constant.STATUS.equals(baseEvent.type)) {
                 if (view_Status != null) {
                     switch (baseEvent.content) {
                         case Constant.SUCCESS:
@@ -203,9 +204,8 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                             break;
                         default:
                     }
-                }
             }
-            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
+            if ( Constant.CAP.equals(baseEvent.type)) {
                 //子模块信息到了，要进行处理，把它加入列表里面
                 if (baseEvent.content.startsWith("嵌")) {
                     CookieBar.builder(getActivity())
@@ -300,7 +300,8 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     public void showSimpleConfirmDialog(String address) {
 //        new MaterialDialog.Builder(getContext())
                 builder.content("当前选中模块地址为：" + address)
-                .positiveText("确认发送反馈")
+                .title("发送反馈")
+                .positiveText("确认发送")
                 .negativeText("取消发送")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override

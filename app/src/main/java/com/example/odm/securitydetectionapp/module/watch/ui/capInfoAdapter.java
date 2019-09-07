@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.bean.capInfo;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -24,19 +25,19 @@ public class capInfoAdapter extends BaseQuickAdapter <capInfo, BaseViewHolder> {
         //首先在进入List前会进行判断是否为异常，如果数据异常无法加入List。
         // 如果子模块的状态为正常(true),则赋值
         if(item.isStatus()) {
-            if("".equals(item.getData())) {
+            if ("".equals(item.getData())) {
                 helper.setText(R.id.tv_cap_status, "正常");
-                helper.setBackgroundRes(R.id.tv_cap_status ,R.drawable.shape_watch_cap_textview_status_normal);
-                helper.setBackgroundRes(R.id.iv_cap ,R.drawable.ic_watch_head_normal);
+                helper.setBackgroundRes(R.id.tv_cap_status, R.drawable.shape_watch_cap_textview_status_normal);
+                helper.setBackgroundRes(R.id.iv_cap, R.drawable.ic_watch_head_normal);
             } else {
-                helper.setText(R.id.tv_cap_status,"异常");
+                helper.setText(R.id.tv_cap_status, "异常");
                 //异常，将文字背景更换为红色
-                helper.setBackgroundRes(R.id.tv_cap_status ,R.drawable.shape_watch_cap_textview_status_abnormal);
-                helper.setBackgroundRes(R.id.iv_cap , R.drawable.ic_watch_head_abnormal);
+                helper.setBackgroundRes(R.id.tv_cap_status, R.drawable.shape_watch_cap_textview_status_abnormal);
+                helper.setBackgroundRes(R.id.iv_cap, R.drawable.ic_watch_head_abnormal);
 
             }
+            //设置模块的地址名
             helper.setText(R.id.tv_cap_location ,item.getAddress());
-
+        }
         }
     }
-}

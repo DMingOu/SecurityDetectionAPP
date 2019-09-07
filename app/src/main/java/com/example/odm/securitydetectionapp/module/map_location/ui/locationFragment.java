@@ -96,7 +96,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
-    private BaseStation baseStation = new BaseStation(0.5 , 0.3 , 0.4);
+    private BaseStation baseStation = new BaseStation(100, 100, 100);
 
 
     @Override
@@ -114,7 +114,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         initViews();
         //假设背景图片已经加载好后，就出现三个基站
         PointManager.setBaseStation(baseStation);
-
         return view;
     }
 

@@ -54,6 +54,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
         }
 
         if( mCapInfo.getData()!= null) {
+
             //若有相同的地址，则修改；没有相同的地址，则直接添加进列表
             for(int i = 0 ; i < capInfoList.size() ; i++) {
                 if(mCapInfo.getAddress().equals(capInfoList.get(i).getAddress())) {
@@ -74,7 +75,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
             adapter.setNewData(capInfoList);
             }
             //当子模块的异常信息非空时。需要添加进历史消息对应的数据库,而且是新的子模块消息
-            if(! "".equals(mCapInfo.getData())  ) {
+            if(! "".equals(mCapInfo.getData()) && mCapInfo.getStatus() ) {
                 historyErrorMsg msg = new historyErrorMsg();
                 msg.setTime(TimeUtil.showCurrentTime(System.currentTimeMillis()));
                 msg.setAddress(mCapInfo.getAddress());

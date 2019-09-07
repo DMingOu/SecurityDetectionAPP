@@ -53,9 +53,27 @@ public class normalMarkerView  extends View {
     private Bitmap bmp_abnormal;
     private Bitmap bmp_base_station;
     private int mWidth, mHeight;
-    double[] baseStation3Th;
+    float[] baseStation3Th;
+    float[] moduleCoodinate;
+    //三个基站的坐标
+    float baseStation_1_x;
+    float baseStation_1_y;
+    float baseStation_2_x;
+    float baseStation_2_y;
+    float baseStation_3_x = 100;
+    float baseStation_3_y = 100;
+    float baseStation_distance_12;
+    float baseStation_distance_13;
+    float baseStation_distance_23;
+    //模块的坐标
+    float module_x;
+    float module_y;
+    float module_distance_1;
+    float module_distance_2;
+    float module_distance_3;
     Paint mPaint;
     Paint mPaint_red;
+    Paint mPaintLine;
     //存储用户触碰坐标的列表
     private List<currentPoint> points;
     //存储用户输入信息的列表
@@ -86,6 +104,10 @@ public class normalMarkerView  extends View {
         mPaint_red.setStrokeWidth(10);
         mPaint_red.setTextSize(42);
         mPaint_red.setTextAlign(Paint.Align.CENTER);
+        mPaintLine = new Paint(0);
+        mPaintLine.setStyle(Paint.Style.STROKE);
+        mPaintLine.setStrokeWidth(10f);
+        mPaintLine.setColor(getResources().getColor(R.color.color_red));
     }
 
     @Override
@@ -119,49 +141,70 @@ public class normalMarkerView  extends View {
 
         //用背景图是否存在阻隔了自动画的点
         if (bmp_normal != null && bmp_abnormal != null && bmp_base_station != null) {
-            //将坐标列表去重再使用，减少遍历次数
+            //将坐标列表去重再使用，减少遍历次数，以下第一个方法需要API至少24，第二个方法不需要
             //abnormalList = PointManager.getAbnormalList().stream().distinct().collect(Collectors.toList());
-            abnormalList = removeDuplicate(PointManager.getAbnormalList());
-            if (points.size() == coordinatesList.size()) {
-                for (int i = 0; i < points.size(); i++) {
-                    float x = points.get(i).currentX - (bmp_normal.getWidth() / 2);
-                    float y = points.get(i).currentY - (bmp_normal.getHeight() / 2);
-                    float newY = y + offY;
-                    boolean isError = false;
-                    //遍历异常坐标列表，若
-                    for(int k = 0 ; k < abnormalList.size(); k++) {
-                        if(abnormalList.get( k ).equals(coordinatesList.get( i ) ) ) {
-                            isError = true;
-                            break;
-                        }
-                    }
-                    //如果 变量 isError 为true 说明 该坐标无异常，绘制红色标记，否则绿色标记
-                    if(isError) {
-                        canvas.drawBitmap(bmp_abnormal, x, y, mPaint);
-                        canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint_red);
-                    } else {
-                        canvas.drawBitmap(bmp_normal, x, y, mPaint);
-                        canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint);
-                    }
-                }
-            }
-            //初始化第三个基站在屏幕坐标系的坐标
+//            abnormalList = removeDuplicate(PointManager.getAbnormalList());
+//            if (points.size() == coordinatesList.size()) {
+//                for (int i = 0; i < points.size(); i++) {
+//                    float x = points.get(i).currentX - (bmp_normal.getWidth() / 2);
+//                    float y = points.get(i).currentY - (bmp_normal.getHeight() / 2);
+////                    float newY = y + offY;
+//                    boolean isError = false;
+//                    //Todo 如何判断 模块异常的变量 isError
+//                    //遍历异常坐标列表，若
+//                    for(int k = 0 ; k < abnormalList.size(); k++) {
+//                        if(abnormalList.get( k ).equals(coordinatesList.get( i ) ) ) {
+//                            isError = true;
+//                            break;
+//                        }
+//                    }
+//                    //如果 变量 isError 为true 说明 该坐标无异常，绘制红色标记，否则绿色标记
+//                    if(isError) {
+//                        canvas.drawBitmap(bmp_abnormal, x, y, mPaint);
+////                        canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint_red);
+//                    } else {
+//                        canvas.drawBitmap(bmp_normal, x, y, mPaint);
+////                        canvas.drawText(coordinatesList.get(i), x + 80f ,newY  , mPaint);
+//                    }
+//                }
+//            }
+            //初始化第三个基站在屏幕坐标系的坐标 ，将基站坐标和基站距离折算成屏幕坐标系
+            baseStation_1_x = 0;
+            baseStation_1_y = 0;
+            baseStation_2_x = mWidth;
+            baseStation_2_y = 0;
+            baseStation_distance_12 = (float) CoordinateCalculateUtil.realConvertScreen(PointManager.getBaseStation().getRelativePathAB(),PointManager.getBaseStation().getRelativePathAB(),mWidth);
+            baseStation_distance_13 = (float) CoordinateCalculateUtil.realConvertScreen(PointManager.getBaseStation().getRelativePathAC() , PointManager.getBaseStation().getRelativePathAB(),mWidth);
+            baseStation_distance_23 = (float)CoordinateCalculateUtil.realConvertScreen(PointManager.getBaseStation().getRelativePathBC() ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
             if(PointManager.getBaseStation() != null) {
-                baseStation3Th = CoordinateCalculateUtil.calcaulate3ThPoint
-                        (PointManager.getBaseStation().getRelativePathAB(),
-                                PointManager.getBaseStation().getRelativePathAC(),
-                                PointManager.getBaseStation().getRelativePathBC(),0 ,0,PointManager.getBaseStation().getRelativePathAB(),0);
-                baseStation3Th[0] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[0] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
-
-                baseStation3Th[1] = CoordinateCalculateUtil.realConvertScreen(baseStation3Th[1] ,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+                //输入未换算的坐标--得到第三个基站未换算的坐标
+                baseStation3Th =  CoordinateCalculateUtil.calcaulate3ThPoint
+                        (baseStation_distance_23, baseStation_distance_13, baseStation_distance_12
+                                ,baseStation_1_x ,baseStation_1_y,
+                                baseStation_2_x,baseStation_2_y );
             }
-            if(baseStation3Th != null && baseStation3Th[0] >= 0 && baseStation3Th[1] >= 0) {
+            baseStation_3_x = (float)baseStation3Th[0];
+            baseStation_3_y = (float)baseStation3Th[1];
+            if(bmp_base_station != null && bmp_normal != null) {
                 // 画上基站的标记
-                canvas.drawBitmap(bmp_base_station , 0 , 0 , mPaint);
+                canvas.drawBitmap(bmp_base_station , baseStation_1_x, baseStation_1_y, mPaint);
                 //如果让第二个基站默认在屏幕右顶点会被挡住，所以要左平移一点
-                canvas.drawBitmap(bmp_base_station ,mWidth - bmp_base_station.getWidth() ,0 ,mPaint);
-                canvas.drawBitmap(bmp_base_station ,((float) baseStation3Th[0])  , (float) baseStation3Th[1] ,mPaint);
-                Logger.d("第三个基站的坐标 x：" + baseStation3Th[0] +"   y: "+ baseStation3Th[1]);
+                canvas.drawBitmap(bmp_base_station ,baseStation_2_x - bmp_base_station.getWidth() ,baseStation_2_y ,mPaint);
+                canvas.drawBitmap(bmp_base_station ,baseStation_3_x - bmp_base_station.getWidth()/2, baseStation_3_y-bmp_base_station.getHeight()/2,mPaint);
+                //将三个基站连线,为了美观，调整了位置
+                canvas.drawLine(baseStation_1_x + bmp_base_station.getWidth()/2,baseStation_1_y+bmp_base_station.getHeight()/2,baseStation_2_x - bmp_base_station.getWidth() /2,baseStation_2_y + bmp_base_station.getHeight() /2,mPaintLine);
+                canvas.drawLine(baseStation_1_x+ bmp_base_station.getWidth()/2,baseStation_1_y+bmp_base_station.getHeight()/2 ,baseStation_3_x,baseStation_3_y,mPaintLine);
+                canvas.drawLine(baseStation_2_x- bmp_base_station.getWidth() /2 ,baseStation_2_y+bmp_base_station.getHeight() /2,baseStation_3_x,baseStation_3_y,mPaintLine);
+                //画出模块的标记
+                module_distance_1 = (float) CoordinateCalculateUtil.realConvertScreen(132.2859,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+                module_distance_2 = (float) CoordinateCalculateUtil.realConvertScreen(86.6 , PointManager.getBaseStation().getRelativePathAB(),mWidth);
+                module_distance_3 = (float)CoordinateCalculateUtil.realConvertScreen(50,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+                moduleCoodinate = CoordinateCalculateUtil.trilateration(baseStation_1_x,baseStation_1_y,module_distance_1,baseStation_2_x,baseStation_2_y,module_distance_2,baseStation_3_x,baseStation_3_y,module_distance_3);
+//                moduleCoodinate = CoordinateCalculateUtil.evaluateCoordinates(baseStation_1_x,baseStation_1_y,baseStation_2_x,baseStation_2_y,baseStation_3_x,baseStation_3_y,module_distance_1,module_distance_2,module_distance_3);
+                module_x = moduleCoodinate[0];
+                module_y = moduleCoodinate[1];
+                Logger.d("折算后模块的 (x，y) : " + module_x +" , "+module_y);
+                canvas.drawBitmap(bmp_normal, module_x - bmp_normal.getWidth()/2, module_y - bmp_normal.getHeight() /2, mPaint);
             }
         }
         super.onDraw(canvas);

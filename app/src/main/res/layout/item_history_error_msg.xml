@@ -5,13 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:layout_above="@id/tv_history_time"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/shape_history_divide"/>
+
     <TextView
         android:id = "@+id/tv_history_address"
         android:layout_marginTop="16dp"
@@ -36,6 +30,7 @@
         android:layout_marginTop="13dp"
         android:layout_marginRight="18dp"
         android:layout_alignParentRight="true"
+        android:layout_alignBottom="@id/tv_history_address"
         android:text="时间--时间--时间"
         />
     <View

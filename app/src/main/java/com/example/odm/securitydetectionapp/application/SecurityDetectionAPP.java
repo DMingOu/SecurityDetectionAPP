@@ -77,9 +77,7 @@ public class SecurityDetectionAPP extends Application {
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
                             ex.printStackTrace();
-                            if(ex.getMessage() != null) {
-                                DataManager.sendConnectErrorEvent();
-                            }
+                            DataManager.sendConnectErrorEvent();
                             Logger.d("出问题了？！错误信息："+ex.getMessage());
                             return;
                          }
