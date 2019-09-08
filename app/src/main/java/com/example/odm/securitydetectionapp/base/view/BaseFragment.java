@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -112,6 +113,7 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
+        this.isUiVisible = isVisibleToUser;
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             isUiVisible = true;
@@ -123,11 +125,11 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
 
     private void lazyLoad() {
         //这里进行双重标记判断,是因为setUserVisibleHint会多次回调,
-        // 并且会在onCreateView执行前回调,必须确保onCreateView加载完毕且页面可见,才加载数据
+        // 并且会在onCreateView执行前回调,必须确保onCreateView加载完毕且页面可见,才加载数据isUiVisible);
         if (isViewCreated && isUiVisible) {
             lazyLoadData();
-            //数据加载完毕,恢复标记,防止重复加载
-            isViewCreated = false;
+            //数据加载完毕,恢复标记,防止重复加载，若在懒加载数据将 isViewCreate变量设置为false则无法变为true
+//            isViewCreated = false;
             isUiVisible = false;
         }
     }

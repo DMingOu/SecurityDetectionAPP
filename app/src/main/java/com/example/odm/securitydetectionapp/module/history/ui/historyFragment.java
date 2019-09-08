@@ -14,7 +14,9 @@ import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
+import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.common.noHistoryView;
+import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.history.bean.historyErrorMsg;
 import com.example.odm.securitydetectionapp.module.history.contract.historyContract;
 import com.example.odm.securitydetectionapp.module.history.presenter.historyPresenter;
@@ -22,6 +24,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.orhanobut.logger.Logger;
 
 import com.xuexiang.xui.widget.statelayout.MultipleStatusView;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +76,11 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
         rv_History.setLayoutManager(layoutManager);
         rv_History.setAdapter(mAdapter);
         mAdapter.setEmptyView(new noHistoryView(getContext(), null));
-
     }
 
     @Override
     protected void lazyLoadData() {
+        Logger.d(" 懒加载获取历史列表 ");
         getPresenter().loadHistoryList(mAdapter);
         if(mAdapter.getItemCount() > 0) {
             rv_History.scrollToPosition(mAdapter.getItemCount() - 1 );
@@ -93,7 +98,6 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
     public historyPresenter onBindPresenter() {
         return new historyPresenter(this);
     }
-
 
     //目标项是否在最后一个可见项之后 private boolean mShouldScroll; //记录目标项位置 private int mToPosition;
     //滑动到指定位置

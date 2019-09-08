@@ -35,9 +35,26 @@ public class CapModuleInfoManager {
         if (mCapInfo.getData() == null) {
             Logger.d("类型不符合capInfo");
             return;
+        }else if(mCapInfo.getData().startsWith("我")) {
+            mCapInfo.setData("受到撞击");
+        } else if(mCapInfo.getData().startsWith("摔")) {
+            mCapInfo.setData("摔倒");
+        } else if(mCapInfo.getData().startsWith("求")) {
+            mCapInfo.setData("求救");
+        }
+        //当子模块的异常信息非空时。需要添加进历史消息对应的数据库,而且是新的子模块消息
+        if(! "".equals(mCapInfo.getData()) && mCapInfo.getStatus() ) {
+            historyErrorMsg msg = new historyErrorMsg();
+            msg.setTime(TimeUtil.showCurrentTime(System.currentTimeMillis()));
+            msg.setAddress(mCapInfo.getAddress());
+            String errorInfo = mCapInfo.getData();
+            errorInfo = errorInfo.replaceAll("\r | \n" ,"");
+            msg.setErrorMsg(errorInfo);
+            historyDaoSession.insert(msg);
         }
 
         if (capInfoList != null) {
+
             boolean isDuplicated = false;
             //若有相同的地址，则修改；没有相同的地址，则直接添加进列表
             for (int i = 0; i < capInfoList.size(); i++) {
@@ -65,16 +82,7 @@ public class CapModuleInfoManager {
                 capInfoList.add(mCapInfo);
             }
         }
-        //当子模块的异常信息非空时。需要添加进历史消息对应的数据库,而且是新的子模块消息
-        if(! "".equals(mCapInfo.getData()) && mCapInfo.getStatus() ) {
-            historyErrorMsg msg = new historyErrorMsg();
-            msg.setTime(TimeUtil.showCurrentTime(System.currentTimeMillis()));
-            msg.setAddress(mCapInfo.getAddress());
-            String errorInfo = mCapInfo.getData();
-            errorInfo = errorInfo.replaceAll("\r | \n" ,"");
-            msg.setErrorMsg(errorInfo);
-            historyDaoSession.insert(msg);
-        }
+
     }
 
 

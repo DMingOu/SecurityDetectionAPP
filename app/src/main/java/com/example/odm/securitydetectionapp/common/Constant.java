@@ -10,7 +10,7 @@ public class Constant {
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILURE = "FAILURE";
     public static final String LOADING = "LOADING";
-
+    public static final String REFRESH = "REFRESH";
     public static final String CAP = "CAP";
     public static final String CALLBACK = "CALLBACK";
 

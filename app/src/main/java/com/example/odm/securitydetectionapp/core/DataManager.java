@@ -21,7 +21,7 @@ public class DataManager {
 //        Logger.d("处理来自服务器的信息：  " + data);
         if(data.startsWith("连") || Constant.SUCCESS.equals(data)) {
             //EventBus 事件发送过快，粘性事件没有起作用，还是在Fragment的onCreateView 前收到了事件
-            //需要让线程睡眠500ms再发送
+            //需要让线程睡眠300ms再发送
             try {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
@@ -31,7 +31,7 @@ public class DataManager {
             baseEvent.type = Constant.STATUS;
             baseEvent.content = Constant.SUCCESS;
             EventBusUtils.postSticky(baseEvent);
-            Logger.d("发送 状态正常事件");
+
 
         } else if(Constant.FAILURE.equals(data)) {
             DataManager.sendConnectErrorEvent();

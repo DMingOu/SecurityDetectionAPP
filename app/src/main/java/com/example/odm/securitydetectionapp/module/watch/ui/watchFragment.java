@@ -79,7 +79,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         ButterKnife.bind(this, view);
         initViews();
         initToolbar();
-        Logger.d("监控页面初始化完成");
         return view;
     }
 
@@ -186,7 +185,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         //对 事件类型为 请求状态 处理事件
         //监控页面出现的模块与定位功能的模块是同一个的，同时正常和异常
         if (Constant.STATUS.equals(baseEvent.type)) {
-            Logger.d("接收到 状态事件");
             if (view_Status != null) {
 
                 switch (baseEvent.content) {
@@ -195,7 +193,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                         if (view_Status.getStatus() == Status.LOADING) {
                             hideLoading();
                             view_Status.setStatus(Status.COMPLETE);
-                            Logger.d("连接成功了，取消连接中");
                         }
                         break;
                     case Constant.FAILURE:
@@ -238,7 +235,11 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     @Override
     protected void lazyLoadData() {
         //需要每次进入页面才加载的内容
-        //Todo 方法在监控页面无效，暂无解决
+
+        if(getAdapter() != null ) {
+            getPresenter().checkCapInfo(getAdapter());
+            Logger.d("懒加载监控页面数据");
+        }
     }
 
 
@@ -292,7 +293,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     /**
      * 简单的提示性对话框
      */
-    public void showSimpleTipDialog(int position ,String  warnString) {
+    private void showSimpleTipDialog(int position ,String  warnString) {
 //        new MaterialDialog.Builder(getContext())
                 builder.iconRes(R.mipmap.warning_yellow)
                 .title(R.string.warning)
