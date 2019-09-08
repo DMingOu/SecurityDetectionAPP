@@ -3,6 +3,7 @@ package com.example.odm.securitydetectionapp.module.watch.model;
 import com.aserbao.aserbaosandroid.functions.database.greenDao.db.*;
 import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.model.BaseModel;
+import com.example.odm.securitydetectionapp.core.CapModuleInfoManager;
 import com.example.odm.securitydetectionapp.core.GreenDaoManager;
 import com.example.odm.securitydetectionapp.module.history.bean.historyErrorMsg;
 import com.example.odm.securitydetectionapp.bean.callBackInfo;
@@ -33,58 +34,19 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     WebSocket webSocket;
 
     private List<capInfo> capInfoList;
-    private DaoSession historyDaoSession;
-    boolean isDuplicated;
+
     public watchModel() {
         webSocket = SecurityDetectionAPP.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""),
                                                       "");
         capInfoList = new ArrayList<>();
-        historyDaoSession = GreenDaoManager.getInstance().getDaoSession();
     }
 
 
     @Override
-    public void addCapInfoList(String capInfoData , capInfoAdapter adapter) {
-
-        //先将JSon数据转换成 子模块对象
-        capInfo mCapInfo = GsonUtil.GsonToBean(capInfoData ,capInfo.class);
-        if(mCapInfo.getData() == null) {
-            Logger.d("类型不符合capInfo");
-            return;
-        }
-
-        if( mCapInfo.getData()!= null) {
-
-            //若有相同的地址，则修改；没有相同的地址，则直接添加进列表
-            for(int i = 0 ; i < capInfoList.size() ; i++) {
-                if(mCapInfo.getAddress().equals(capInfoList.get(i).getAddress())) {
-                    //子模块的在线状态为正常，则放在列表最上面，若为不正常，则在列表中查找并删除它
-                    if(mCapInfo.isStatus() ) {
-                        capInfoList.get(i).setData(mCapInfo.getData());
-                    } else {
-                        capInfoList.remove(i) ;
-                    }
-                    isDuplicated = true;
-                    break;
-                }
-            }
-            //不重复，说明初次出现的子模块，需要加入子模块列表
-            if(!isDuplicated) {
-                capInfoList.add(mCapInfo);
-              }
+    public void addCapInfoList(capInfoAdapter adapter) {
+            capInfoList.clear();
+            capInfoList.addAll(CapModuleInfoManager.getCapInfoList());
             adapter.setNewData(capInfoList);
-            }
-            //当子模块的异常信息非空时。需要添加进历史消息对应的数据库,而且是新的子模块消息
-            if(! "".equals(mCapInfo.getData()) && mCapInfo.getStatus() ) {
-                historyErrorMsg msg = new historyErrorMsg();
-                msg.setTime(TimeUtil.showCurrentTime(System.currentTimeMillis()));
-                msg.setAddress(mCapInfo.getAddress());
-                String errorInfo = mCapInfo.getData();
-                errorInfo = errorInfo.replaceAll("\r | \n" ,"");
-                msg.setErrorMsg(errorInfo);
-                historyDaoSession.insert(msg);
-            }
-            isDuplicated = false;
         }
 
 
@@ -95,9 +57,24 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     public void clearAllCapInfo(capInfoAdapter adapter) {
 
         capInfoList.clear();
+        CapModuleInfoManager.setCapInfoList(capInfoList);
+        adapter.replaceData(capInfoList);
+    }
+
+
+    @Override
+    public void  handledAbnormalModule(int position , capInfoAdapter adapter) {
+        capInfo normalCapInfo = new capInfo(capInfoList.get(position).getAddress(),"",true);
+        capInfoList.clear();
+        capInfoList.add(normalCapInfo);
+        CapModuleInfoManager.getCapInfoList().set(position , normalCapInfo);
         adapter.setNewData(capInfoList);
     }
 
+    @Override
+    public void handleModuleOffline(capInfoAdapter adapter) {
+        clearAllCapInfo(adapter);
+    }
 
     /*
      *  将反馈对象包装成 JSON 发送给 服务器
@@ -129,7 +106,6 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
 //        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
         //匹配 以 ws 开头，且字符串包含 websocket 的地址
         if(isMatch) {
-//            ToastUtil.showLongToastCenter("连接中");
             newSocket = SecurityDetectionAPP.getWebSocket(newUrl , "");
             if (newSocket == null) {
                 ToastUtil.showLongToastCenter("切换服务器失败");

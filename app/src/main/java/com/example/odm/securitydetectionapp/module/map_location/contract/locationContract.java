@@ -3,6 +3,7 @@ package com.example.odm.securitydetectionapp.module.map_location.contract;
 import com.example.odm.securitydetectionapp.base.model.IBaseModel;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.IBaseView;
+import com.example.odm.securitydetectionapp.module.watch.ui.capInfoAdapter;
 
 /**
  * The interface Location contract.
@@ -24,6 +25,8 @@ public interface locationContract {
         boolean  handleCallBack (String  callbackString);
 
         boolean  saveImage(String imageName);
+
+
     }
 
     /**

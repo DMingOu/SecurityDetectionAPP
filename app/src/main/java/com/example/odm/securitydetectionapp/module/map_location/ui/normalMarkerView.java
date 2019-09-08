@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.example.odm.securitydetectionapp.R;
+import com.example.odm.securitydetectionapp.core.CapModuleInfoManager;
 import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.util.CoordinateCalculateUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
@@ -66,8 +67,8 @@ public class normalMarkerView  extends View {
     float baseStation_distance_13;
     float baseStation_distance_23;
     //模块的坐标
-    float module_x;
-    float module_y;
+    float module_x = 100f;
+    float module_y = 750f;
     float module_distance_1;
     float module_distance_2;
     float module_distance_3;
@@ -107,7 +108,7 @@ public class normalMarkerView  extends View {
         mPaintLine = new Paint(0);
         mPaintLine.setStyle(Paint.Style.STROKE);
         mPaintLine.setStrokeWidth(10f);
-        mPaintLine.setColor(getResources().getColor(R.color.color_red));
+        mPaintLine.setColor(getResources().getColor(R.color.purple));
     }
 
     @Override
@@ -185,6 +186,7 @@ public class normalMarkerView  extends View {
             }
             baseStation_3_x = (float)baseStation3Th[0];
             baseStation_3_y = (float)baseStation3Th[1];
+
             if(bmp_base_station != null && bmp_normal != null) {
                 // 画上基站的标记
                 canvas.drawBitmap(bmp_base_station , baseStation_1_x, baseStation_1_y, mPaint);
@@ -196,20 +198,45 @@ public class normalMarkerView  extends View {
                 canvas.drawLine(baseStation_1_x+ bmp_base_station.getWidth()/2,baseStation_1_y+bmp_base_station.getHeight()/2 ,baseStation_3_x,baseStation_3_y,mPaintLine);
                 canvas.drawLine(baseStation_2_x- bmp_base_station.getWidth() /2 ,baseStation_2_y+bmp_base_station.getHeight() /2,baseStation_3_x,baseStation_3_y,mPaintLine);
                 //画出模块的标记
-                module_distance_1 = (float) CoordinateCalculateUtil.realConvertScreen(132.2859,PointManager.getBaseStation().getRelativePathAB(),mWidth);
-                module_distance_2 = (float) CoordinateCalculateUtil.realConvertScreen(86.6 , PointManager.getBaseStation().getRelativePathAB(),mWidth);
-                module_distance_3 = (float)CoordinateCalculateUtil.realConvertScreen(50,PointManager.getBaseStation().getRelativePathAB(),mWidth);
-                moduleCoodinate = CoordinateCalculateUtil.trilateration(baseStation_1_x,baseStation_1_y,module_distance_1,baseStation_2_x,baseStation_2_y,module_distance_2,baseStation_3_x,baseStation_3_y,module_distance_3);
-//                moduleCoodinate = CoordinateCalculateUtil.evaluateCoordinates(baseStation_1_x,baseStation_1_y,baseStation_2_x,baseStation_2_y,baseStation_3_x,baseStation_3_y,module_distance_1,module_distance_2,module_distance_3);
-                module_x = moduleCoodinate[0];
-                module_y = moduleCoodinate[1];
-                Logger.d("折算后模块的 (x，y) : " + module_x +" , "+module_y);
-                canvas.drawBitmap(bmp_normal, module_x - bmp_normal.getWidth()/2, module_y - bmp_normal.getHeight() /2, mPaint);
+//                module_distance_1 = (float) CoordinateCalculateUtil.realConvertScreen(132.2859,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+//                module_distance_2 = (float) CoordinateCalculateUtil.realConvertScreen(86.6 , PointManager.getBaseStation().getRelativePathAB(),mWidth);
+//                module_distance_3 = (float)CoordinateCalculateUtil.realConvertScreen(50,PointManager.getBaseStation().getRelativePathAB(),mWidth);
+//                moduleCoodinate = CoordinateCalculateUtil.trilateration(baseStation_1_x,baseStation_1_y,module_distance_1,baseStation_2_x,baseStation_2_y,module_distance_2,baseStation_3_x,baseStation_3_y,module_distance_3);
+////                moduleCoodinate = CoordinateCalculateUtil.evaluateCoordinates(baseStation_1_x,baseStation_1_y,baseStation_2_x,baseStation_2_y,baseStation_3_x,baseStation_3_y,module_distance_1,module_distance_2,module_distance_3);
+//                module_x = moduleCoodinate[0];
+//                module_y = moduleCoodinate[1];
+//                Logger.d("折算后模块的 (x，y) : " + module_x +" , "+module_y);
+                module_x = getModule_x();
+                module_y = getModule_y();
+
+                if(CapModuleInfoManager.getCapInfoList().size() > 0) {
+//                    Logger.d("当前帽子列表的第0项的 异常data ： " + CapModuleInfoManager.getCapInfoList().get(0).getData());
+                    if( "".equals(CapModuleInfoManager.getCapInfoList().get(0).getData() ) ) {
+                        canvas.drawBitmap(bmp_normal, module_x - bmp_normal.getWidth()/2, module_y - bmp_normal.getHeight() /2, mPaint);
+                  }  else {
+                        canvas.drawBitmap(bmp_abnormal, module_x - bmp_normal.getWidth()/2, module_y - bmp_normal.getHeight() /2, mPaint);
+                    }
+                }
             }
         }
         super.onDraw(canvas);
     }
 
+    public float getModule_x() {
+        return module_x;
+    }
+
+    public float getModule_y() {
+        return module_y;
+    }
+
+    public void setModule_x(float module_x) {
+        this.module_x = module_x;
+    }
+
+    public void setModule_y(float module_y) {
+        this.module_y = module_y;
+    }
 
     /*
     * 触碰事件--监听用户对屏幕的动作

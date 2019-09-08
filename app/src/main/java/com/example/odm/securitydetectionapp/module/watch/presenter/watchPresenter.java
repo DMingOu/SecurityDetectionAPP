@@ -9,6 +9,8 @@ import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.orhanobut.logger.Logger;
 
 /**
+ * 监控页面 P 层
+ *
  * @author: ODM
  * @date: 2019/7/25
  */
@@ -22,14 +24,9 @@ public class watchPresenter extends BasePresenter<watchContract.View> implements
 
 
     @Override
-    public void checkCapInfo(String data ,capInfoAdapter adapter) {
-        //初步判断数据是否为关于子模块的信息
-        if(data .startsWith("{")) {
-            mWatchModel.addCapInfoList(data ,adapter);
-        } else if(data .startsWith("嵌")){
-            Logger.d("嵌入式设备下线了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
-            mWatchModel.clearAllCapInfo(adapter);
-        }
+    public void checkCapInfo(capInfoAdapter adapter) {
+
+        mWatchModel.addCapInfoList(adapter);
     }
 
     @Override
@@ -42,4 +39,13 @@ public class watchPresenter extends BasePresenter<watchContract.View> implements
         mWatchModel.sendCallBack(msg);
     }
 
+    @Override
+    public void handledAbnormalModule(int position ,capInfoAdapter adapter) {
+        mWatchModel.handledAbnormalModule(position , adapter);
+    }
+
+    @Override
+    public void handleModuleOffline(capInfoAdapter adapter) {
+        mWatchModel.handleModuleOffline(adapter);
+    }
 }

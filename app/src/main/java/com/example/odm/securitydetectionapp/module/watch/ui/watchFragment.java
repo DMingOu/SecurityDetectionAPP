@@ -79,8 +79,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         ButterKnife.bind(this, view);
         initViews();
         initToolbar();
-        getPresenter().checkCapInfo(GsonUtil.GsonString(new capInfo("060A","",true)), mAdapter);
-        getPresenter().checkCapInfo(GsonUtil.GsonString(new capInfo("160A","我好穷",true)), mAdapter);
+        Logger.d("监控页面初始化完成");
         return view;
     }
 
@@ -100,7 +99,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 //如果子模块的属性为异常，则会呼出一个信息弹窗
                 String errorData = mAdapter.getData().get(position).getData();
                 if(! "".equals(errorData)){
-                    showSimpleTipDialog(errorData);
+                    showSimpleTipDialog(position , errorData);
                 }
             }
         });
@@ -112,7 +111,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 //非异常状态不能发送反馈
                 if(! "".equals(errorData)) {
                     //触发效果：长按呼出弹窗，点击确认按钮后发送反馈
-                    showSimpleConfirmDialog(mAdapter.getData().get(position).getAddress());
+                    showSimpleConfirmDialog(position , mAdapter.getData().get(position).getAddress());
                     //触发效果:长按呼出跟随子项的按钮列表，列表，列表
 //                    View itemview = rv_Module.getChildAt(position);
 //                    showCallButton(itemview , mAdapter.getData().get(position).getAddress());
@@ -180,50 +179,60 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
       *  处理服务器发过来的信息
      */
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN ,sticky = true)
     @Override
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
         //对 事件类型为 请求状态 处理事件
         //监控页面出现的模块与定位功能的模块是同一个的，同时正常和异常
-            if (Constant.STATUS.equals(baseEvent.type)) {
-                if (view_Status != null) {
-                    switch (baseEvent.content) {
-                        case Constant.SUCCESS:
+        if (Constant.STATUS.equals(baseEvent.type)) {
+            Logger.d("接收到 状态事件");
+            if (view_Status != null) {
 
-                            if(view_Status.getStatus() == Status.LOADING) {
-                                hideLoading();
-                                view_Status.setStatus(Status.COMPLETE);
-                            }
-                            break;
-                        case Constant.FAILURE:
-                            if(view_Status.getStatus() == Status.LOADING) {
-                                hideLoading();
-                                view_Status.setStatus(Status.ERROR);
-                            }
-                            break;
-                        default:
-                    }
-            }
-            if ( Constant.CAP.equals(baseEvent.type)) {
-                //子模块信息到了，要进行处理，把它加入列表里面
-                if (baseEvent.content.startsWith("嵌")) {
-                    CookieBar.builder(getActivity())
-                            .setTitle("嵌入式设备已下线")
-                            .setIcon(R.mipmap.warning_yellow)
-                            .setMessage("子模块信息初始化")
-                            .setLayoutGravity(Gravity.BOTTOM)
-                            .setAction(R.string.known, null)
-                            .show();
-                } else
-                    if(getAdapter() != null) {
-                    //准备将子模块加入列表中
-                    getPresenter().checkCapInfo(baseEvent.content, getAdapter());
-                } else {
-                    Logger.d("adapter还没初始化" + "消息为" + baseEvent.content);
+                switch (baseEvent.content) {
+
+                    case Constant.SUCCESS:
+                        if (view_Status.getStatus() == Status.LOADING) {
+                            hideLoading();
+                            view_Status.setStatus(Status.COMPLETE);
+                            Logger.d("连接成功了，取消连接中");
+                        }
+                        break;
+                    case Constant.FAILURE:
+                        if (view_Status.getStatus() != Status.ERROR) {
+                            hideLoading();
+                            view_Status.setStatus(Status.ERROR);
+                        }
+                        break;
+                    default:
                 }
+            } else {
+                Logger.d("监控页面状态栏还没初始化");
             }
         }
+            if (Constant.CAP.equals(baseEvent.type)) {
+                //子模块信息到了，要进行处理，把它加入列表里面
+                if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
+                if (baseEvent.content.startsWith("嵌")) {
+                        CookieBar.builder(getActivity())
+                                .setTitle("嵌入式设备已下线")
+                                .setIcon(R.mipmap.warning_yellow)
+                                .setMessage("子模块信息初始化")
+                                .setLayoutGravity(Gravity.BOTTOM)
+                                .setAction(R.string.known, null)
+                                .show();
+                        getPresenter().handleModuleOffline(getAdapter());
+                    } else {
+                        if (getAdapter() != null) {
+                            //准备将子模块加入列表中
+                            getPresenter().checkCapInfo(getAdapter());
+                        } else {
+                            Logger.d("adapter还没初始化" + "消息为" + baseEvent.content);
+                        }
+                    }
+                }
+            }
+
     }
 
     @Override
@@ -267,9 +276,9 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         String newUrl = dialog.getInputEditText().getText().toString();
-                        Logger.d(newUrl);
-                        if (! "".equals(newUrl) || newUrl.startsWith("w")) {
+                        if (! "".equals(newUrl) && newUrl.startsWith("w")) {
                             getPresenter().switchWebSocket(newUrl, getAdapter());
+                            showLoading();
                         } else {
                             ToastUtil.showShortToastCenter("你输入的服务器地址不合法");
                         }
@@ -277,18 +286,25 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 })
                 .cancelable(true)
                 .show();
-        showLoading();
+
     }
 
     /**
      * 简单的提示性对话框
      */
-    public void showSimpleTipDialog(String  warnString) {
+    public void showSimpleTipDialog(int position ,String  warnString) {
 //        new MaterialDialog.Builder(getContext())
                 builder.iconRes(R.mipmap.warning_yellow)
                 .title(R.string.warning)
                 .content(warnString)
                 .positiveText(R.string.known)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                getPresenter().handledAbnormalModule(position , getAdapter());
+                            }
+                        })
+                .negativeText("")
                 .show();
     }
 
@@ -297,7 +313,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     /**
      * 简单的确认对话框
      */
-    public void showSimpleConfirmDialog(String address) {
+    public void showSimpleConfirmDialog(int position ,String address) {
 //        new MaterialDialog.Builder(getContext())
                 builder.content("当前选中模块地址为：" + address)
                 .title("发送反馈")
@@ -307,6 +323,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         getPresenter().sendCallBack(address);
+                        getPresenter().handledAbnormalModule(position , getAdapter());
                     }
                 })
                 .show();

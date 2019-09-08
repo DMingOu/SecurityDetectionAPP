@@ -52,7 +52,7 @@ public class SecurityDetectionAPP extends Application {
         XUI.debug(true);
         mContext = getApplicationContext();
         Logger.addLogAdapter(new AndroidLogAdapter());
-        initWebSocket("ws://192.168.1.138:8888/websocket" , "");
+        initWebSocket("ws://47.102.125.28:8888/websocket" , "");
         initGreenDao();
         //初始化集成下载平台
         if (isMainProcess()) {
@@ -84,7 +84,6 @@ public class SecurityDetectionAPP extends Application {
                         webSocket.setStringCallback(new com.koushikdutta.async.http.WebSocket.StringCallback() {
                             @Override
                             public void onStringAvailable(String data) {
-                                Logger.d("回调信息:   " + data);
                                 //成功连接后，服务器会自动发送消息
                                 DataManager.dataRoute(data);
                             }

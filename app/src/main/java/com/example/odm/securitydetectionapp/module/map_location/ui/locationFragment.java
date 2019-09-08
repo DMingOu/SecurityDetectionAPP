@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.orhanobut.logger.Logger;
 import com.tuyenmonkey.mkloader.MKLoader;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
+import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -96,7 +99,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
-    private BaseStation baseStation = new BaseStation(100, 100, 100);
+    private BaseStation baseStation = new BaseStation(9, 9, 6);
 
 
     @Override
@@ -149,7 +152,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     break;
                 } else {
                     marker_normal.setVisibility(View.VISIBLE);
-                    marker_normal.invalidate();
+                    //Todo 假方法，让标记可以直线动起来
+                    moduleScheduledRun();
                 }
 
 //                if (!isEditted) {
@@ -184,11 +188,63 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
-        if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
-            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
-                getPresenter().handleCallBack(baseEvent.content);
+        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+            if(Constant.CAP.equals(baseEvent.type)) {
+                if (baseEvent.content.startsWith("嵌")) {
+                    CookieBar.builder(getActivity())
+                            .setTitle("嵌入式设备已下线")
+                            .setIcon(R.mipmap.warning_yellow)
+                            .setMessage("子模块信息初始化")
+                            .setLayoutGravity(Gravity.BOTTOM)
+                            .setAction(R.string.known, null)
+                            .show();
+                } else {
+                    //Todo 在这个页面收到了信息，要去判断是否将模块标记转为异常标记
+                    marker_normal.invalidate();
+                }
             }
         }
+//        if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+//            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
+//                getPresenter().handleCallBack(baseEvent.content);
+//            }
+//        }
+    }
+
+    //Todo 假方法，让标记可以自动动起来
+    private void moduleScheduledRun () {
+        final Handler mHandlerData = new Handler();
+        if(marker_normal.getModule_x() != 100f) {
+            marker_normal.setModule_x(100f);
+        }
+        if(marker_normal.getModule_y() != 750f) {
+            marker_normal.setModule_y(750f);
+        }
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (marker_normal.getModule_y() > 100f && marker_normal.getModule_x() == 100f) {
+                    marker_normal.setModule_x(100f);
+                    marker_normal.setModule_y(marker_normal.getModule_y() - 50f);
+                    marker_normal.invalidate();
+                }
+                if (marker_normal.getModule_x() <= 540f && marker_normal.getModule_y() <= 100f) {
+                    marker_normal.setModule_x(marker_normal.getModule_x() + 44f);
+                    marker_normal.setModule_y(100f);
+                    marker_normal.invalidate();
+            }
+                //设置时间间隔
+                if(marker_normal.getModule_x() != 540f || marker_normal.getModule_y() != 750f) {
+                    mHandlerData.postDelayed(this, 500);
+                } else {
+                    mHandlerData.postDelayed(this,1000);
+                }
+            }
+        };
+
+        //设置延迟启动时间
+        mHandlerData.postDelayed(runnable, 3000);
+
     }
 
     @Override

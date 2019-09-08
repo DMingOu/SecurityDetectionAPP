@@ -31,7 +31,7 @@ public interface watchContract {
          * @param capInfoData the cap info data
          * @param adapter     the adapter
          */
-        void addCapInfoList(String capInfoData ,capInfoAdapter adapter);
+        void addCapInfoList(capInfoAdapter adapter);
 
         /**
          * 清空所有模块信息
@@ -48,6 +48,10 @@ public interface watchContract {
          */
         void switchWebSocket(String  newUrl ,capInfoAdapter adapter);
 
+
+        void  handledAbnormalModule(int position , capInfoAdapter adapter);
+
+        void  handleModuleOffline(capInfoAdapter adapter);
     }
 
     /**
@@ -74,7 +78,7 @@ public interface watchContract {
          * @param data    the data
          * @param adapter the adapter
          */
-        void  checkCapInfo(String  data ,capInfoAdapter adapter);
+        void  checkCapInfo(capInfoAdapter adapter);
 
         /**
          * Send call back.
@@ -90,6 +94,13 @@ public interface watchContract {
          * @param adapter the adapter
          */
         void switchWebSocket(String  newUrl ,capInfoAdapter adapter);
+
+
+        void  handledAbnormalModule(int position ,capInfoAdapter adapter);
+
+        void  handleModuleOffline(capInfoAdapter adapter);
     }
+
+
 
 }

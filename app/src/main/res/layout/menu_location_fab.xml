@@ -18,7 +18,8 @@
         android:id="@+id/fab_clearAll"
         style="@style/FabMenu.Buttons"
         android:src="@drawable/ic_map_clear_all"
-        app:fab_label="清空所有标记"/>
+        app:fab_label="清空所有标记"
+        android:visibility="gone"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_switch"
