@@ -108,5 +108,10 @@ dependencies {
     implementation files('libs/OpenInstall_v2.2.2.jar')
 
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
+    //美团消息总线
+    implementation 'com.jeremyliao:live-event-bus-x:1.5.0'
+
+    //JetPack
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.0.0'
 
 }

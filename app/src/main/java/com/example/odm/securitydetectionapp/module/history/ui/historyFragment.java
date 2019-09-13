@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,13 +17,16 @@ import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.common.noHistoryView;
+import com.example.odm.securitydetectionapp.core.PageStatusManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.history.bean.historyErrorMsg;
 import com.example.odm.securitydetectionapp.module.history.contract.historyContract;
 import com.example.odm.securitydetectionapp.module.history.presenter.historyPresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.orhanobut.logger.Logger;
 
+import com.xuexiang.xui.widget.popupwindow.status.Status;
 import com.xuexiang.xui.widget.statelayout.MultipleStatusView;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -63,6 +67,7 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         ButterKnife.bind(this, view);
         initViews();
+        handleLiveEvent();
         return view;
     }
 
@@ -77,6 +82,7 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
         rv_History.setAdapter(mAdapter);
         mAdapter.setEmptyView(new noHistoryView(getContext(), null));
     }
+
 
     @Override
     protected void lazyLoadData() {
@@ -98,6 +104,22 @@ public class historyFragment<P extends IBasePresenter> extends BaseFragment<hist
     public historyPresenter onBindPresenter() {
         return new historyPresenter(this);
     }
+
+    /**
+     * 处理 LiveEvent 事件
+     */
+    private void handleLiveEvent(){
+        LiveEventBus
+                .get(Constant.CAP, String.class)
+                .observe(this , content -> {
+                     if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_HISTORY_CURENT) {
+                            if(content != null && content.startsWith("嵌")) {
+                                showOfflineBar();
+                            }
+                        }
+                });
+    }
+
 
     //目标项是否在最后一个可见项之后 private boolean mShouldScroll; //记录目标项位置 private int mToPosition;
     //滑动到指定位置

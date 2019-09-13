@@ -2,6 +2,7 @@ package com.example.odm.securitydetectionapp.base.view;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
 import com.orhanobut.logger.Logger;
+import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -92,6 +95,7 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleEvent(BaseEvent baseEvent) {
+
     }
 
     /**
@@ -141,6 +145,19 @@ public abstract class BaseFragment <P extends IBasePresenter>  extends Fragment 
         super.onDestroyView();
         isViewCreated = false;
         isUiVisible = false;
+    }
+
+    /**
+     * 弹出Bar提示--嵌入式设备下线
+     */
+    public void showOfflineBar() {
+        CookieBar.builder(getActivity())
+                .setTitle("嵌入式设备已下线")
+                .setIcon(R.mipmap.warning_yellow)
+                .setMessage("子模块信息初始化")
+                .setLayoutGravity(Gravity.BOTTOM)
+                .setAction(R.string.known, null)
+                .show();
     }
 
 

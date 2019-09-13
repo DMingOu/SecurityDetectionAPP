@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -43,10 +44,12 @@ import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.orhanobut.logger.Logger;
 import com.tuyenmonkey.mkloader.MKLoader;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
+import com.xuexiang.xui.widget.popupwindow.status.Status;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -115,8 +118,10 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         View view = inflater.inflate(R.layout.fragment_location, container, false);
         ButterKnife.bind(this, view);
         initViews();
+        handleLiveEvent();
         //假设背景图片已经加载好后，就出现三个基站
         PointManager.setBaseStation(baseStation);
+
         return view;
     }
 
@@ -156,20 +161,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     moduleScheduledRun();
                 }
 
-//                if (!isEditted) {
-//                    //准备开启标注模式
-//                    marker_normal.setEditted(true);
-//                    if (marker_normal.getVisibility() == View.INVISIBLE) {
-//                        marker_normal.setVisibility(View.VISIBLE);
-//                    }
-//                    fabSwitch.setLabelText("关闭标注模式");
-//                    isEditted = true;
-//                } else {
-//                    //准备关闭标注模式
-//                    marker_normal.setEditted(false);
-//                    fabSwitch.setLabelText("开启标注模式");
-//                    isEditted = false;
-//                }
 
                 break;
             default:
@@ -191,13 +182,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
             if(Constant.CAP.equals(baseEvent.type)) {
                 if (baseEvent.content.startsWith("嵌")) {
-                    CookieBar.builder(getActivity())
-                            .setTitle("嵌入式设备已下线")
-                            .setIcon(R.mipmap.warning_yellow)
-                            .setMessage("子模块信息初始化")
-                            .setLayoutGravity(Gravity.BOTTOM)
-                            .setAction(R.string.known, null)
-                            .show();
+                    showOfflineBar();
                 } else {
                     //Todo 在这个页面收到了信息，要去判断是否将模块标记转为异常标记
                     marker_normal.invalidate();
@@ -209,6 +194,24 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 //                getPresenter().handleCallBack(baseEvent.content);
 //            }
 //        }
+    }
+
+    /**
+     * 处理 LiveEvent 事件
+     */
+    private void handleLiveEvent(){
+        LiveEventBus
+                .get(Constant.CAP, String.class)
+                .observe(this, content -> {
+                        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+                            if(content != null && content.startsWith("嵌")) {
+                                showOfflineBar();
+                            } else {
+                                marker_normal.invalidate();
+                            }
+                        }
+                });
+
     }
 
     //Todo 假方法，让标记可以自动动起来

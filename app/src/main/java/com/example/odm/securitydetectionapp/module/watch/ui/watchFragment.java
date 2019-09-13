@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ import com.example.odm.securitydetectionapp.util.GsonUtil;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.TimeUtil;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.orhanobut.logger.Logger;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 import com.xuexiang.xui.widget.dialog.materialdialog.DialogAction;
@@ -78,6 +80,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         ButterKnife.bind(this, view);
         initViews();
         initToolbar();
+        handleLiveEvent();
         return view;
     }
 
@@ -171,11 +174,50 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         return true;
     }
 
-
-    /*
-      *  处理服务器发过来的信息
+    /**
+     * 处理 LiveEvent 事件
      */
+    private void handleLiveEvent(){
+        LiveEventBus
+                .get(Constant.SUCCESS, String.class)
+                .observe(this, content -> {
+                        if(Constant.SUCCESS.equals(content)) {
+                            if (view_Status.getStatus() == Status.LOADING) {
+                                hideLoading();
+                                view_Status.setStatus(Status.COMPLETE);
+                            }
+                        }
+                });
+        LiveEventBus
+                .get(Constant.FAILURE, String.class)
+                .observe(this, content -> {
+                        if(Constant.FAILURE.equals(content)) {
+                            if (view_Status.getStatus() == Status.LOADING) {
+                                hideLoading();
+                                view_Status.setStatus(Status.ERROR);
+                            }
+                        }
+                });
+        LiveEventBus
+                .get(Constant.CAP, String.class)
+                .observe(this, content -> {
+                            if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
+                                if (content != null && content.startsWith("嵌")) {
+                                    showOfflineBar();
+                                    getPresenter().handleModuleOffline(getAdapter());
+                                } else if (getAdapter() != null) {
+                                    //获取子模块信息加入列表显示
+                                    getPresenter().checkCapInfo(getAdapter());
+                                }
+                            }
+                });
+    }
 
+
+    /**
+     * 处理服务器发过来的信息
+     * @param baseEvent
+     */
     @Subscribe(threadMode = ThreadMode.MAIN ,sticky = true)
     @Override
     public void handleEvent(BaseEvent baseEvent) {
@@ -209,13 +251,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                 //子模块信息到了，要进行处理，把它加入列表里面
                 if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
                 if (baseEvent.content.startsWith("嵌")) {
-                        CookieBar.builder(getActivity())
-                                .setTitle("嵌入式设备已下线")
-                                .setIcon(R.mipmap.warning_yellow)
-                                .setMessage("子模块信息初始化")
-                                .setLayoutGravity(Gravity.BOTTOM)
-                                .setAction(R.string.known, null)
-                                .show();
+                        showOfflineBar();
                         getPresenter().handleModuleOffline(getAdapter());
                     } else {
                         if (getAdapter() != null) {
@@ -351,6 +387,19 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
             }
         });
     }
+
+//    /**
+//     * 弹出Bar提示--嵌入式设备下线
+//     */
+//    private void showOfflineBar() {
+//        CookieBar.builder(getActivity())
+//                .setTitle("嵌入式设备已下线")
+//                .setIcon(R.mipmap.warning_yellow)
+//                .setMessage("子模块信息初始化")
+//                .setLayoutGravity(Gravity.BOTTOM)
+//                .setAction(R.string.known, null)
+//                .show();
+//    }
 
 
 }

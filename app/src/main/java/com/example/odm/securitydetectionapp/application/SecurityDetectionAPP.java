@@ -16,6 +16,7 @@ import com.example.odm.securitydetectionapp.module.MainActivity;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.fm.openinstall.OpenInstall;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.DataCallback;
@@ -39,6 +40,9 @@ import cat.ereza.customactivityoncrash.config.CaocConfig;
 public class SecurityDetectionAPP extends Application {
 
     private  static Context mContext;
+    /**
+     * The M websocket.
+     */
     static WebSocket  mWebsocket;
     private static final String TAG = "SecurityDetectionAPP";
     @Override
@@ -50,20 +54,21 @@ public class SecurityDetectionAPP extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
-        //初始化UI框架
-        XUI.init(this);
-        XUI.debug(true);
         mContext = getApplicationContext();
         Logger.addLogAdapter(new AndroidLogAdapter());
+        initXUIFramework();
+        initLiveEventBus();
         initWebSocket("ws://47.102.125.28:8888/websocket" , "");
         initGreenDao();
         initCrashPage();
-        //初始化集成下载平台
-        if (isMainProcess()) {
-            OpenInstall.init(this);
-        }
+        initOpenInstallFramework();
     }
 
+    /**
+     * Get context context.
+     *
+     * @return the context
+     */
     public static  Context getContext(){
         return  mContext;
     }
@@ -81,7 +86,7 @@ public class SecurityDetectionAPP extends Application {
                     public void onCompleted(Exception ex, WebSocket webSocket) {
                         if (ex != null) {
                             ex.printStackTrace();
-                            DataManager.sendConnectErrorEvent();
+                            DataManager.getInstance().sendConnectErrorEvent();
                             Logger.d("出问题了？！错误信息："+ex.getMessage());
                             return;
                          }
@@ -89,7 +94,7 @@ public class SecurityDetectionAPP extends Application {
                             @Override
                             public void onStringAvailable(String data) {
                                 //成功连接后，服务器会自动发送消息
-                                DataManager.dataRoute(data);
+                                DataManager.getInstance().dataRoute(data);
                             }
                         });
                         webSocket.setDataCallback(new DataCallback() {
@@ -110,9 +115,10 @@ public class SecurityDetectionAPP extends Application {
 
     /**
      * 获取WebSocket
-     *外部获取WebSocket的方法
+     * 外部获取WebSocket的方法
      *
      * @param urlString the url string
+     * @param protocol  the protocol
      * @return the web socket
      */
     public static WebSocket getWebSocket(String urlString , String protocol) {
@@ -149,6 +155,11 @@ public class SecurityDetectionAPP extends Application {
     }
 
 
+    /**
+     * 判断是否主进程
+     *
+     * @return the boolean
+     */
     public boolean isMainProcess() {
         int pid = android.os.Process.myPid();
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -160,7 +171,17 @@ public class SecurityDetectionAPP extends Application {
         return false;
     }
 
-    //让用户使用时不直接闪退，而是跳到一个Activity，可以重启应用，但无法阻止或保存闪退信息
+    /**
+     * 初始化OpenInstall 集成下载平台
+     */
+    private void initOpenInstallFramework() {
+
+        if (isMainProcess()) {
+            OpenInstall.init(this);
+        }
+    }
+
+    //让用户使用时不直接闪退，而是跳到一个Activity，可以重启应用，但无法阻止或保存或上传闪退信息
     private void initCrashPage(){
         CaocConfig.Builder.create()
                 .backgroundMode(CaocConfig.BACKGROUND_MODE_CRASH)
@@ -175,6 +196,28 @@ public class SecurityDetectionAPP extends Application {
                 .errorActivity(null)
                 .eventListener(null)
                 .apply();
+    }
+
+    /**
+     * 初始化UI框架
+     * XUI
+     */
+    private void initXUIFramework() {
+        //初始化UI框架
+        XUI.init(this);
+        XUI.debug(true);
+    }
+
+    /**
+     * 初始化消息总线
+     * LiveEventBus
+     */
+    private void initLiveEventBus() {
+        LiveEventBus
+                .config()
+                .supportBroadcast(this)
+                .lifecycleObserverAlwaysActive(true)
+                .autoClear(false);
     }
 
 }

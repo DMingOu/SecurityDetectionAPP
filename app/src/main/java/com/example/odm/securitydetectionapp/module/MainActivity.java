@@ -20,6 +20,7 @@ import com.example.odm.securitydetectionapp.module.watch.ui.watchFragment;
 import com.example.odm.securitydetectionapp.module.map_location.ui.locationFragment;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.orhanobut.logger.Logger;
 import com.yinglan.alphatabs.AlphaTabsIndicator;
 
@@ -72,9 +73,7 @@ public class MainActivity extends FragmentActivity {
             public void onPageSelected(int position) {
                 if(position == 0) {
                     PageStatusManager.setPageStatus(PageStatusManager.PAGE_HISTORY_CURENT);
-                    BaseEvent baseEvent = EventFactory.getInstance();
-                    baseEvent.type = Constant.REFRESH;
-                    EventBusUtils.postSticky(baseEvent);
+
                 } else if(position == 1) {
                     PageStatusManager.setPageStatus(PageStatusManager.PAGE_WATCH_CURRENT);
                 } else if(position == 2) {
