@@ -107,4 +107,6 @@ dependencies {
     //打包下载平台
     implementation files('libs/OpenInstall_v2.2.2.jar')
 
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
+
 }

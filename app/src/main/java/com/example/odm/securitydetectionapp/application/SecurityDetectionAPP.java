@@ -5,12 +5,14 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.core.DataManager;
 import com.example.odm.securitydetectionapp.core.GreenDaoManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.core.eventbus.EventBusUtils;
 import com.example.odm.securitydetectionapp.core.eventbus.EventFactory;
+import com.example.odm.securitydetectionapp.module.MainActivity;
 import com.example.odm.securitydetectionapp.util.SharedPreferencesUtils;
 import com.example.odm.securitydetectionapp.util.ToastUtil;
 import com.fm.openinstall.OpenInstall;
@@ -27,6 +29,7 @@ import com.xuexiang.xui.XUI;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cat.ereza.customactivityoncrash.config.CaocConfig;
 
 
 /**
@@ -54,6 +57,7 @@ public class SecurityDetectionAPP extends Application {
         Logger.addLogAdapter(new AndroidLogAdapter());
         initWebSocket("ws://47.102.125.28:8888/websocket" , "");
         initGreenDao();
+        initCrashPage();
         //初始化集成下载平台
         if (isMainProcess()) {
             OpenInstall.init(this);
@@ -154,6 +158,23 @@ public class SecurityDetectionAPP extends Application {
             }
         }
         return false;
+    }
+
+    //让用户使用时不直接闪退，而是跳到一个Activity，可以重启应用，但无法阻止或保存闪退信息
+    private void initCrashPage(){
+        CaocConfig.Builder.create()
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_CRASH)
+                .enabled(true)
+                .showErrorDetails(true)
+                .showRestartButton(true)
+                .logErrorOnRestart(true)
+                .trackActivities(true)
+                .minTimeBetweenCrashesMs(2000)
+                .errorDrawable(R.drawable.customactivityoncrash_error_image)
+                .restartActivity(MainActivity.class)
+                .errorActivity(null)
+                .eventListener(null)
+                .apply();
     }
 
 }

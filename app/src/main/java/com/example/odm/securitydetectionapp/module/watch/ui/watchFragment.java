@@ -64,7 +64,6 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     @BindView(R.id.rv_module)
     RecyclerView rv_Module;
     private capInfoAdapter mAdapter;
-    private List<capInfo> mCapList;
     MaterialDialog.Builder builder;
     private PopupWindowList mPopupWindowList;
     @Override
@@ -85,11 +84,10 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
 
     private void initViews() {
         builder  = new MaterialDialog.Builder(getContext());
-        mCapList = new ArrayList<>();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         rv_Module.setLayoutManager(layoutManager);
-        mAdapter = new capInfoAdapter(R.layout.item_cap ,mCapList);
+        mAdapter = new capInfoAdapter(R.layout.item_cap ,new ArrayList<capInfo>());
         rv_Module.setAdapter(mAdapter);
         //列表子项点击事件
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -252,7 +250,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     /**
      * 弹出输入对话框，切换服务器.
      */
-    public void showSwitchDialog() {
+    private void showSwitchDialog() {
         //new MaterialDialog.Builder(getContext())
         builder.iconRes(R.drawable.ic_watch_dialog_warning_red)
                 .title("提示")
@@ -314,7 +312,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
     /**
      * 简单的确认对话框
      */
-    public void showSimpleConfirmDialog(int position ,String address) {
+    private void showSimpleConfirmDialog(int position ,String address) {
 //        new MaterialDialog.Builder(getContext())
                 builder.content("当前选中模块地址为：" + address)
                 .title("发送反馈")
