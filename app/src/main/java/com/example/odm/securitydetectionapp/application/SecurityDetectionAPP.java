@@ -25,6 +25,9 @@ import com.koushikdutta.async.http.WebSocket;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 //import com.squareup.leakcanary.LeakCanary;
+import com.tencent.bugly.Bugly;
+import com.tencent.tinker.loader.app.TinkerApplication;
+import com.tencent.tinker.loader.shareutil.ShareConstants;
 import com.xuexiang.xui.XUI;
 
 import java.util.Timer;
@@ -37,14 +40,17 @@ import cat.ereza.customactivityoncrash.config.CaocConfig;
  * author: ODM
  * date: 2019/7/25
  */
-public class SecurityDetectionAPP extends Application {
+public class SecurityDetectionAPP extends TinkerApplication {
 
     private  static Context mContext;
-    /**
-     * The M websocket.
-     */
     static WebSocket  mWebsocket;
     private static final String TAG = "SecurityDetectionAPP";
+
+    public SecurityDetectionAPP() {
+        super(ShareConstants.TINKER_ENABLE_ALL, "app.fynnjason.tinkerdemo.MyApplicationLike",
+                "com.tencent.tinker.loader.TinkerLoader", false);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -62,6 +68,7 @@ public class SecurityDetectionAPP extends Application {
         initGreenDao();
         initCrashPage();
         initOpenInstallFramework();
+        initBugly();
     }
 
     /**
@@ -218,6 +225,10 @@ public class SecurityDetectionAPP extends Application {
                 .supportBroadcast(this)
                 .lifecycleObserverAlwaysActive(true)
                 .autoClear(false);
+    }
+
+    private void initBugly() {
+        Bugly.init(getApplicationContext(), "91f7de2058", true);
     }
 
 }

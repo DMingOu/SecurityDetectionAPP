@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+// 依赖tinker插件
+apply from: 'tinker-support.gradle'
 
 android {
     compileSdkVersion 28
@@ -13,13 +15,37 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
-            abiFilters "armeabi","arm64-v8a"
+            abiFilters "armeabi"
         }
     }
+    // 签名配置
+    signingConfigs {
+        // 正式包
+        release {
+            try {
+                storeFile file("C:\\Users\\ODM\\Documents\\DMingOu.jks")
+                storePassword "ytmz8901.+"
+                keyAlias "DMingOu.key"
+                keyPassword "kczx030201.+"
+            } catch (ex) {
+                throw new InvalidUserDataException(ex.toString())
+            }
+        }
+        // 测试包
+        debug {
+            storeFile file("C:\\Users\\ODM\\.android\\debug.keystore")
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release // 设置签名文件
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug // 设置签名文件
+
         }
     }
 
@@ -43,6 +69,7 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
+
 }
 
 
@@ -112,6 +139,12 @@ dependencies {
     implementation 'com.jeremyliao:live-event-bus-x:1.5.0'
 
     //JetPack
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.1.0'
 
+    implementation(name: 'bugly_crashreport_upgrade-1.4.1', ext: 'aar')
+
+    // 解决65536方法数
+    implementation 'com.android.support:multidex:1.0.3'
+    // tinker
+    implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
 }
