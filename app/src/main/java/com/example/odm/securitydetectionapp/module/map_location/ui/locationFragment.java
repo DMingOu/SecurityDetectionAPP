@@ -13,8 +13,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +21,11 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.example.odm.securitydetectionapp.R;
-import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.bean.BaseStation;
@@ -48,8 +44,6 @@ import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.orhanobut.logger.Logger;
 import com.tuyenmonkey.mkloader.MKLoader;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
-import com.xuexiang.xui.widget.popupwindow.bar.CookieBar;
-import com.xuexiang.xui.widget.popupwindow.status.Status;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -59,7 +53,6 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -83,7 +76,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @BindView(R.id.iv_background_location)
     ImageView iv_background;
     @BindView(R.id.view_normal)
-    normalMarkerView marker_normal;
+    ModuleOnStationView marker_normal;
     @BindView(R.id.fab_load_background)
     FloatingActionButton fabLoading;
     @BindView(R.id.fab_switch)
@@ -128,12 +121,11 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
 
     /**
-     * Init views.
+     * 初始化自定义View 模块可视化View
+     *
      */
     private void initViews() {
-        if (PointManager.checkPointListCount()) {
             marker_normal.setVisibility(View.VISIBLE);
-        }
     }
 
     /**

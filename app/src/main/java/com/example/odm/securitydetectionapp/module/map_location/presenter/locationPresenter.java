@@ -23,6 +23,7 @@ public class locationPresenter extends BasePresenter<locationContract.View>imple
     @Override
     public void handleCallBack(String callbackString) {
         if ( ! callbackString.startsWith("嵌")) {
+            //收到了模块状态更改(变异常)的数据，去M层解析
             if(mlocationModel.handleCallBack(callbackString)) {
                 handleCallBackSuccess();
             }

@@ -290,7 +290,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
         //new MaterialDialog.Builder(getContext())
         builder.iconRes(R.drawable.ic_watch_dialog_warning_red)
                 .title("提示")
-                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,"等待连接服务器ing") + "\n您确定要切换服务器吗?")
+                .content("当前服务器地址: " + "\n" + SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,"等待连接服务器ing") + "\n您确定要切换吗?")
                 .inputType(
                         InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .input(

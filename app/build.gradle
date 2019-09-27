@@ -10,7 +10,7 @@ android {
         applicationId "com.example.odm.securitydetectionapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 9
+        versionCode 10
         versionName "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -141,6 +141,7 @@ dependencies {
     //JetPack
     implementation 'androidx.lifecycle:lifecycle-livedata:2.1.0'
 
+    //Bugly应用升级SDK
     implementation(name: 'bugly_crashreport_upgrade-1.4.1', ext: 'aar')
 
     // 解决65536方法数

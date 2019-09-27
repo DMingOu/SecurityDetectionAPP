@@ -41,7 +41,7 @@
         android:layout_below="@id/tb_location"
         android:visibility="visible"/>
 
-    <com.example.odm.securitydetectionapp.module.map_location.ui.normalMarkerView
+    <com.example.odm.securitydetectionapp.module.map_location.ui.ModuleOnStationView
         android:id= "@+id/view_normal"
         android:layout_below="@id/tb_location"
         android:layout_width="wrap_content"

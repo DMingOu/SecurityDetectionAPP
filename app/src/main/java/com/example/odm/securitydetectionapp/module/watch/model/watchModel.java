@@ -2,6 +2,7 @@ package com.example.odm.securitydetectionapp.module.watch.model;
 
 import com.aserbao.aserbaosandroid.functions.database.greenDao.db.*;
 import com.example.odm.securitydetectionapp.application.SecurityDetectionAPP;
+import com.example.odm.securitydetectionapp.application.SecurityDetectionAPPLike;
 import com.example.odm.securitydetectionapp.base.model.BaseModel;
 import com.example.odm.securitydetectionapp.core.CapModuleInfoManager;
 import com.example.odm.securitydetectionapp.core.GreenDaoManager;
@@ -36,7 +37,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
     private List<capInfo> capInfoList;
 
     public watchModel() {
-        webSocket = SecurityDetectionAPP.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""),
+        webSocket = SecurityDetectionAPPLike.getWebSocket(SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.WEBSOCK,""),
                                                       "");
         capInfoList = new ArrayList<>();
     }
@@ -76,13 +77,14 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
         clearAllCapInfo(adapter);
     }
 
-    /*
-     *  将反馈对象包装成 JSON 发送给 服务器
-     *  请求类型：搜救
+
+    /**
+     * 将反馈对象包装成 JSON 发送给 服务器
+     * @param address 具体要发送反馈的模块的地址
      */
     @Override
     public void  sendCallBack (String address) {
-        callBackInfo mCallBack = new callBackInfo(false,true,address,"");
+        callBackInfo mCallBack = new callBackInfo(true,address,"");
         String callBackJsonString = GsonUtil.GsonString(mCallBack);
         Logger.d("反馈"+callBackJsonString);
 
@@ -106,7 +108,7 @@ public class watchModel extends BaseModel<watchPresenter> implements watchContra
 //        List<String> protocolList = RegexUtil.getAllSatisfyStr(newUrl , "(?<=:)[0-9]*(?=\\/)");
         //匹配 以 ws 开头，且字符串包含 websocket 的地址
         if(isMatch) {
-            newSocket = SecurityDetectionAPP.getWebSocket(newUrl , "");
+            newSocket = SecurityDetectionAPPLike.getWebSocket(newUrl , "");
             if (newSocket == null) {
                 ToastUtil.showLongToastCenter("切换服务器失败");
             } else {

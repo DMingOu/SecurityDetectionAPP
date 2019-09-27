@@ -13,17 +13,18 @@ import org.greenrobot.greendao.annotation.Generated;
 public class callBackInfo {
 
     /**
-     * 手机反馈给服务器(->帽子)的消息  && 服务器反馈给地图页面的信息
+     * 手机反馈给服务器(->帽子)的消息
+     * address : 需要反馈的模块的地址
+     * message : 反馈信息，固定为: "" 空字符串
+     * rescue : 反馈状态，固定为: true
      */
 
     private String address;
     private String message;
-    private boolean locate;
     private boolean rescue;
 
-    public callBackInfo(boolean locate,boolean rescue,String addres ,String message) {
+    public callBackInfo(boolean rescue,String addres ,String message) {
         this.address = addres;
-        this.locate = locate;
         this.rescue = rescue;
         this.message = message;
     }
@@ -49,13 +50,6 @@ public class callBackInfo {
         this.message = message;
     }
 
-    public boolean isLocate() {
-        return locate;
-    }
-
-    public void setLocate(boolean locate) {
-        this.locate = locate;
-    }
 
     public boolean isRescue() {
         return rescue;
@@ -68,15 +62,11 @@ public class callBackInfo {
     @NonNull
     @Override
     public String toString() {
-        return  "地址: " + address +
-                "   locate: " + locate +
+        return  "反馈模块地址: " + address +
                 "   rescue: " + rescue +
                 "   message: " + message;
     }
 
-    public boolean getLocate() {
-        return this.locate;
-    }
 
     public boolean getRescue() {
         return this.rescue;

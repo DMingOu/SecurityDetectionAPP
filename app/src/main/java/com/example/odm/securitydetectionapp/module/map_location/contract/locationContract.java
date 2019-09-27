@@ -16,14 +16,13 @@ public interface locationContract {
      * The interface Model.
      */
     interface Model extends IBaseModel {
-        /**
-         * Handle call back boolean.
-         *
-         * @param callbackString the callback string
-         * @return the boolean
-         */
-        boolean  handleCallBack (String  callbackString);
 
+//        boolean  handleCallBack (String  callbackString);
+        /**
+         *保存图片
+         * @param imageName
+         * @return
+         */
         boolean  saveImage(String imageName);
 
 

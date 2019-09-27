@@ -47,7 +47,7 @@ public class SecurityDetectionAPP extends TinkerApplication {
     private static final String TAG = "SecurityDetectionAPP";
 
     public SecurityDetectionAPP() {
-        super(ShareConstants.TINKER_ENABLE_ALL, "app.fynnjason.tinkerdemo.MyApplicationLike",
+        super(ShareConstants.TINKER_ENABLE_ALL, "com.example.odm.securitydetectionapp.application.SecurityDetectionAPPLike",
                 "com.tencent.tinker.loader.TinkerLoader", false);
     }
 
@@ -61,14 +61,14 @@ public class SecurityDetectionAPP extends TinkerApplication {
 //        }
 //        LeakCanary.install(this);
         mContext = getApplicationContext();
-        Logger.addLogAdapter(new AndroidLogAdapter());
-        initXUIFramework();
-        initLiveEventBus();
-        initWebSocket("ws://47.102.125.28:8888/websocket" , "");
-        initGreenDao();
-        initCrashPage();
-        initOpenInstallFramework();
-        initBugly();
+//        Logger.addLogAdapter(new AndroidLogAdapter());
+//        initXUIFramework();
+//        initLiveEventBus();
+//        initWebSocket("ws://47.102.125.28:8888/websocket" , "");
+//        initGreenDao();
+//        initCrashPage();
+//        initOpenInstallFramework();
+//        initBugly();
     }
 
     /**
@@ -87,6 +87,7 @@ public class SecurityDetectionAPP extends TinkerApplication {
      * @return the web socket
      */
     private static WebSocket initWebSocket(String  urlString , String protocol ) {
+        Logger.d(TAG+"连接WebSocket");
         AsyncHttpClient.getDefaultInstance().websocket(
                 urlString, "", new AsyncHttpClient.WebSocketConnectCallback() {
                     @Override
