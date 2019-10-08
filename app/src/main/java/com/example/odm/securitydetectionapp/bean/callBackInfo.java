@@ -23,8 +23,8 @@ public class callBackInfo {
     private String message;
     private boolean rescue;
 
-    public callBackInfo(boolean rescue,String addres ,String message) {
-        this.address = addres;
+    public callBackInfo(boolean rescue,String address ,String message) {
+        this.address = address;
         this.rescue = rescue;
         this.message = message;
     }

@@ -3,6 +3,7 @@ package com.example.odm.securitydetectionapp.module.map_location.contract;
 import com.example.odm.securitydetectionapp.base.model.IBaseModel;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.IBaseView;
+import com.example.odm.securitydetectionapp.bean.LocateInfo;
 import com.example.odm.securitydetectionapp.module.watch.ui.capInfoAdapter;
 
 /**
@@ -36,6 +37,12 @@ public interface locationContract {
          * Update abnormal list.
          */
         void updateAbnormalList();
+
+        /**
+         * 更新定位模块的信息
+         * @param locateInfo 定位模块的信息
+         */
+         void moduleLocationChanged(LocateInfo locateInfo) ;
     }
 
     /**

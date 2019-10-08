@@ -13,10 +13,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +31,7 @@ import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
 import com.example.odm.securitydetectionapp.bean.BaseStation;
+import com.example.odm.securitydetectionapp.bean.LocateInfo;
 import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.core.PageStatusManager;
 import com.example.odm.securitydetectionapp.core.PointManager;
@@ -112,9 +115,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         ButterKnife.bind(this, view);
         initViews();
         handleLiveEvent();
-        //假设背景图片已经加载好后，就出现三个基站
-        PointManager.setBaseStation(baseStation);
-
         return view;
     }
 
@@ -129,9 +129,9 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     }
 
     /**
-     * 悬浮按钮的点击事件监听
+     * 悬浮按钮菜单 按钮点击事件监听
      *
-     * @param v the v
+     * @param v 控件
      */
     @OnClick({R.id.fab_load_background, R.id.fab_switch, R.id.fab_clearAll})
     void onClick(View v) {
@@ -141,19 +141,18 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 selectBackGround();
                 break;
             case R.id.fab_clearAll:
-                marker_normal.clearAllMarker();
+                Log.e(TAG, "onClick: 清空标记操作 已被废弃" );
                 break;
             case R.id.fab_switch:
                 if (imageUri == null) {
-                    ToastUtil.showLongToastCenter("当前未设置背景图，无法开启定位功能");
+                    ToastUtil.showLongToastCenter("当前暂未设置背景图，无法开启定位功能");
                     break;
                 } else {
+                    //显示 当前的 基站和模块的位置
+                    ToastUtil.showLongToastBottom("正在开启模块定位功能......");
                     marker_normal.setVisibility(View.VISIBLE);
-                    //Todo 假方法，让标记可以直线动起来
-                    moduleScheduledRun();
+                    marker_normal.invalidate();
                 }
-
-
                 break;
             default:
         }
@@ -171,16 +170,16 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     public void handleEvent(BaseEvent baseEvent) {
         super.handleEvent(baseEvent);
-        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
-            if(Constant.CAP.equals(baseEvent.type)) {
-                if (baseEvent.content.startsWith("嵌")) {
-                    showOfflineBar();
-                } else {
-                    //Todo 在这个页面收到了信息，要去判断是否将模块标记转为异常标记
-                    marker_normal.invalidate();
-                }
-            }
-        }
+//        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+//            if(Constant.CAP.equals(baseEvent.type)) {
+//                if (baseEvent.content.startsWith("嵌")) {
+//                    showOfflineBar();
+//                } else {
+//
+//                    marker_normal.invalidate();
+//                }
+//            }
+//        }
 //        if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
 //            if (baseEvent != null && Constant.CAP.equals(baseEvent.type)) {
 //                getPresenter().handleCallBack(baseEvent.content);
@@ -192,55 +191,41 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      * 处理 LiveEvent 事件
      */
     private void handleLiveEvent(){
+        //接收到了 定位信息处理 的事件 ，处理它: 将定位可视化--自定义View
         LiveEventBus
-                .get(Constant.CAP, String.class)
+                .get(Constant.LOCATION, String.class)
                 .observe(this, content -> {
                         if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
-                            if(content != null && content.startsWith("嵌")) {
-                                showOfflineBar();
-                            } else {
-                                marker_normal.invalidate();
-                            }
+                            getPresenter().handleLocationInfo(content);
                         }
+                });
+        //接收到了 嵌入式设备下线 的事件 ，处理它: 弹出离线的通知
+        LiveEventBus
+                .get(Constant.OFFLINE, String.class)
+                .observe(this, content -> {
+                    if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
+                            showOfflineBar();
+                    }
                 });
 
     }
 
-    //Todo 假方法，让标记可以自动动起来
-    private void moduleScheduledRun () {
-        final Handler mHandlerData = new Handler();
-        if(marker_normal.getModule_x() != 100f) {
-            marker_normal.setModule_x(100f);
-        }
-        if(marker_normal.getModule_y() != 750f) {
-            marker_normal.setModule_y(750f);
-        }
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (marker_normal.getModule_y() > 100f && marker_normal.getModule_x() == 100f) {
-                    marker_normal.setModule_x(100f);
-                    marker_normal.setModule_y(marker_normal.getModule_y() - 50f);
-                    marker_normal.invalidate();
-                }
-                if (marker_normal.getModule_x() <= 540f && marker_normal.getModule_y() <= 100f) {
-                    marker_normal.setModule_x(marker_normal.getModule_x() + 44f);
-                    marker_normal.setModule_y(100f);
-                    marker_normal.invalidate();
-            }
-                //设置时间间隔
-                if(marker_normal.getModule_x() != 540f || marker_normal.getModule_y() != 750f) {
-                    mHandlerData.postDelayed(this, 500);
-                } else {
-                    mHandlerData.postDelayed(this,1000);
-                }
-            }
-        };
 
-        //设置延迟启动时间
-        mHandlerData.postDelayed(runnable, 3000);
-
+    @Override
+    public void moduleLocationChanged(LocateInfo locateInfo) {
+        if(marker_normal != null) {
+            //为自定义View 设置定位信息数据源
+            marker_normal.calculateLocationData(locateInfo);
+//            //自定义View 显示 基站和模块 位置
+//            if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
+//                if(marker_normal.getVisibility() != View.VISIBLE) {
+//                    marker_normal.setVisibility(View.VISIBLE);
+//                }
+//            }
+        }
     }
+
+
 
     @Override
     public locationPresenter onBindPresenter() {

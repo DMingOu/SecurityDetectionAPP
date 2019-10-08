@@ -11,19 +11,19 @@ import com.example.odm.securitydetectionapp.bean.BaseStation;
 public  class PointManager  {
 
 
-    private static BaseStation baseStation ;
-
-    //存放 三角定位后算法得出的模块的 x y
-    private static double[] point = new double[2];
-
-
-
-    public static BaseStation getBaseStation() {
-        return baseStation;
-    }
-
-    public static void setBaseStation(BaseStation baseStation) {
-        PointManager.baseStation = baseStation;
-    }
+//    private static BaseStation baseStation ;
+//
+//    //存放 三角定位后算法得出的模块的 x y
+//    private static double[] point = new double[2];
+//
+//
+//
+//    public static BaseStation getBaseStation() {
+//        return baseStation;
+//    }
+//
+//    public static void setBaseStation(BaseStation baseStation) {
+//        PointManager.baseStation = baseStation;
+//    }
 
 }

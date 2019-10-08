@@ -178,6 +178,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
      * 处理 LiveEvent 事件
      */
     private void handleLiveEvent(){
+        //接收到了 WebSocket连接成功 的事件 ，处理它
         LiveEventBus
                 .get(Constant.SUCCESS, String.class)
                 .observe(this, content -> {
@@ -188,6 +189,7 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                             }
                         }
                 });
+        //接收到了 WebSocket连接异常或失败 的事件 ，处理它
         LiveEventBus
                 .get(Constant.FAILURE, String.class)
                 .observe(this, content -> {
@@ -198,18 +200,25 @@ public class watchFragment<P extends IBasePresenter> extends BaseFragment<watchP
                             }
                         }
                 });
+        //接收到了 嵌入式设备下线 的事件 ，处理它: 清空模块列表并弹出离线的通知
         LiveEventBus
-                .get(Constant.CAP, String.class)
+                .get(Constant.OFFLINE, String.class)
                 .observe(this, content -> {
+                    //若当前页面为监控页面收到 嵌入式设备下线 的事件，则弹出通知且清空模块列表
+                    //若当前页面非监控页面，收到嵌入式设备下线 的事件，则清空模块列表
                             if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
-                                if (content != null && content.startsWith("嵌")) {
-                                    showOfflineBar();
-                                    getPresenter().handleModuleOffline(getAdapter());
-                                } else if (getAdapter() != null) {
-                                    //获取子模块信息加入列表显示
-                                    getPresenter().checkCapInfo(getAdapter());
-                                }
+                                showOfflineBar();
                             }
+                            getPresenter().handleModuleOffline(getAdapter());
+
+                });
+        //接收到模块信息的事件，处理：展示模块列表
+        LiveEventBus
+                .get(Constant.ADDRESS ,String.class)
+                .observe(this , content-> {
+                    if(! "".equals(content)) {
+                        getPresenter().checkCapInfo(getAdapter());
+                    }
                 });
     }
 

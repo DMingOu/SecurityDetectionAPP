@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".module.MainActivity">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/xui_config_color_black" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp"
@@ -16,19 +21,14 @@
         android:layout_above="@id/bottom_Tab"
         android:layout_marginBottom="0dp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/xui_config_color_black" />
-
 
 
     <com.yinglan.alphatabs.AlphaTabsIndicator
         android:id="@+id/bottom_Tab"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:background="@color/menu_white_normal"
         android:layout_alignParentBottom="true"
+        android:background="@color/menu_white_normal"
         android:orientation="horizontal">
 
         <com.yinglan.alphatabs.AlphaTabView
@@ -36,41 +36,41 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="5dp"
+            app:paddingTexwithIcon="1dp"
             app:tabIconNormal="@drawable/ic_bottomnavigation_history_selected_no"
             app:tabIconSelected="@drawable/ic_bottomnavigation_history_selected"
             app:tabText="历史消息"
             app:tabTextSize="13sp"
             app:textColorNormal="@color/gray"
             app:textColorSelected="@color/blue_start"
-            app:paddingTexwithIcon="1dp"
             />
 
         <com.yinglan.alphatabs.AlphaTabView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:padding="5dp"
             android:layout_weight="1"
+            android:padding="5dp"
+            app:paddingTexwithIcon="1dp"
             app:tabIconNormal="@drawable/ic_bottomnavigation_watch_selected_no"
             app:tabIconSelected="@drawable/ic_bottomnavigation_watch_selected"
             app:tabText="监控"
             app:tabTextSize="13sp"
             app:textColorNormal="@color/gray"
             app:textColorSelected="@color/blue_start"
-            app:paddingTexwithIcon="1dp"
             />
 
         <com.yinglan.alphatabs.AlphaTabView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:padding="5dp"
             android:layout_weight="1"
+            android:padding="5dp"
+            app:paddingTexwithIcon="1dp"
             app:tabIconNormal="@drawable/ic_bottomnavigation_map_selected_no"
             app:tabIconSelected="@drawable/ic_bottomnavigation_map_selected"
             app:tabText="地图"
             app:tabTextSize="13sp"
             app:textColorNormal="@color/gray"
             app:textColorSelected="@color/blue_start"
-            app:paddingTexwithIcon="1dp"
             />
     </com.yinglan.alphatabs.AlphaTabsIndicator>
 
