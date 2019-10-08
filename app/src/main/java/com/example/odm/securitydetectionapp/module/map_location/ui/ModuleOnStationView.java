@@ -188,7 +188,7 @@ public class ModuleOnStationView extends View {
             invalidate();
         } else {
 
-            isLocate = true;
+            isLocate = false;
         }
     }
 
