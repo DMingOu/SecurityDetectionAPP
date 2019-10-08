@@ -8,6 +8,8 @@ package com.example.odm.securitydetectionapp.bean;
 public class LocateInfo {
 
     /**
+     * 左上角基站为A0基站，右上角基站为A1基站
+     *
      * tagToStationA0 : 230     模块到基站A0的距离
      * tagToStationA1 : 650     模块到基站A1的距离
      * tagToStationA2 : 350     模块到基站A2的距离
@@ -23,7 +25,7 @@ public class LocateInfo {
     private double stationA0ToStationA1;
     private double stationA0ToStationA2;
     private double stationA1ToStationA2;
-    private double modelName;
+    private String modelName;
 
     public double getTagToStationA0() {
         return tagToStationA0;
@@ -73,11 +75,11 @@ public class LocateInfo {
         this.stationA1ToStationA2 = stationA1ToStationA2;
     }
 
-    public double getModelName() {
+    public String getModelName() {
         return modelName;
     }
 
-    public void setModelName(double modelName) {
+    public void setModelName(String modelName) {
         this.modelName = modelName;
     }
 

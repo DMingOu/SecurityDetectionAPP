@@ -54,8 +54,18 @@ public class CoordinateCalculateUtil {
         return  A;
     }
 
+    /**
+     * 三角形，由已知的三条边 a,b,c和已知的两个点的坐标A，B，求未知点C的坐标
+     * @param a
+     * @param b
+     * @param c
+     * @param xA
+     * @param yA
+     * @param xB
+     * @param yB
+     * @return
+     */
     public static float[] calcaulate3ThPoint(double a ,double b ,double c ,double xA ,double yA ,double xB ,double yB ) {
-        double timeCut1 = System.currentTimeMillis();
         double thetaA;
         thetaA = Math.acos((b * b + c * c - a * a) / (2 *b * c));
         double    thetaAB = Math.atan((yB - yA)/(xB - xA));
@@ -68,8 +78,6 @@ public class CoordinateCalculateUtil {
             xC = xA + b * Math.cos(thetaAC);
         }
         double  yC = yA + b * Math.sin(Math.PI - thetaAC);
-        double timeCut2 = System.currentTimeMillis();
-        double  time = timeCut2 - timeCut1;
         point[0] = (float) xC;
         point[1] = (float)yC;
         return point;
@@ -154,4 +162,5 @@ public class CoordinateCalculateUtil {
         point[1] = (float) y;
         return point;
     }
+
 }

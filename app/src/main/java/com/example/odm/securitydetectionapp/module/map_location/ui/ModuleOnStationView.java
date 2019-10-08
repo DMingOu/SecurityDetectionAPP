@@ -13,6 +13,7 @@ import com.example.odm.securitydetectionapp.bean.LocateInfo;
 import com.example.odm.securitydetectionapp.core.CapModuleInfoManager;
 import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.util.CoordinateCalculateUtil;
+import com.orhanobut.logger.Logger;
 import com.xuexiang.xui.widget.dialog.materialdialog.MaterialDialog;
 
 import java.util.LinkedHashSet;
@@ -38,8 +39,8 @@ public class ModuleOnStationView extends View {
     float baseStation_2_y;
     float baseStation_0_x ;
     float baseStation_0_y ;
-    float baseStation_distance_12;
     float baseStation_distance_01;
+    float baseStation_distance_12;
     float baseStation_distance_02;
     float tagToStationA0;
     float tagToStationA1;
@@ -114,14 +115,14 @@ public class ModuleOnStationView extends View {
         if (bmp_normal != null && bmp_abnormal != null && bmp_base_station != null) {
                 if(isLocate) {
                     // 画上基站的标记
-                    canvas.drawBitmap(bmp_base_station, baseStation_1_x, baseStation_1_y, mPaint);
+                    canvas.drawBitmap(bmp_base_station, baseStation_0_x, baseStation_0_y, mPaint);
                     //如果让第二个基站默认在屏幕右顶点会被挡住，所以要左平移一点
-                    canvas.drawBitmap(bmp_base_station, baseStation_2_x - bmp_base_station.getWidth(), baseStation_2_y, mPaint);
-                    canvas.drawBitmap(bmp_base_station, baseStation_0_x - (float) bmp_base_station.getWidth() / 2, baseStation_0_y - (float) bmp_base_station.getHeight() / 2, mPaint);
+                    canvas.drawBitmap(bmp_base_station, baseStation_1_x - bmp_base_station.getWidth(), baseStation_1_y, mPaint);
+                    canvas.drawBitmap(bmp_base_station, baseStation_2_x - (float) bmp_base_station.getWidth() / 2, baseStation_2_y - (float) bmp_base_station.getHeight() / 2, mPaint);
                     //将三个基站连线,为了美观，调整了位置
-                    canvas.drawLine(baseStation_1_x + (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x - (float) bmp_base_station.getWidth() / 2, baseStation_2_y + (float) bmp_base_station.getHeight() / 2, mPaintLine);
-                    canvas.drawLine(baseStation_1_x + (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, baseStation_0_x, baseStation_0_y, mPaintLine);
-                    canvas.drawLine(baseStation_2_x - (float) bmp_base_station.getWidth() / 2, baseStation_2_y + (float) bmp_base_station.getHeight() / 2, baseStation_0_x, baseStation_0_y, mPaintLine);
+                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, mPaintLine);
+                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
+                    canvas.drawLine(baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
 
                     //根据模块转换后的坐标画出模块，若当前模块信息为异常，则画出异常的模块样式，否则画出正常样式
                     if (CapModuleInfoManager.getCapInfoList().size() > 0) {
@@ -152,31 +153,32 @@ public class ModuleOnStationView extends View {
     public void calculateLocationData(LocateInfo locateInfo) {
         if(locateInfo != null) {
             //初始化第三个基站在屏幕坐标系的坐标 ，将基站坐标和基站距离折算成屏幕坐标系
-            baseStation_1_x = 0;
+            baseStation_0_x = 0;
+            baseStation_0_y = 0;
+            baseStation_1_x = mWidth;
             baseStation_1_y = 0;
-            baseStation_2_x = mWidth;
-            baseStation_2_y = 0;
-            baseStation_distance_12 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA1ToStationA2(),locateInfo.getStationA1ToStationA2(),mWidth);
-            baseStation_distance_01 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA0ToStationA1() , locateInfo.getStationA1ToStationA2(),mWidth);
-            baseStation_distance_02 = (float)CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA0ToStationA2() ,locateInfo.getStationA1ToStationA2(),mWidth);
+            baseStation_distance_01 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA0ToStationA1(),locateInfo.getStationA0ToStationA1(),mWidth);
+            baseStation_distance_12 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA1ToStationA2() , locateInfo.getStationA0ToStationA1(),mWidth);
+            baseStation_distance_02 = (float)CoordinateCalculateUtil.realConvertScreen(locateInfo.getStationA0ToStationA2() ,locateInfo.getStationA0ToStationA1(),mWidth);
             //输入已换算的坐标--得到第三个基站已换算的坐标
             baseStation3Th =  CoordinateCalculateUtil.calcaulate3ThPoint
-                                (baseStation_distance_02, baseStation_distance_01, baseStation_distance_12,
-                                baseStation_1_x ,baseStation_1_y,
-                                baseStation_2_x,baseStation_2_y );
-            baseStation_0_x = baseStation3Th[0];
-            baseStation_0_y = baseStation3Th[1];
+                                (baseStation_distance_12, baseStation_distance_02, baseStation_distance_01,
+                                baseStation_0_x ,baseStation_0_y,
+                                baseStation_1_x,baseStation_1_y );
+            baseStation_2_x = baseStation3Th[0];
+            baseStation_2_y = baseStation3Th[1];
 
             //将 模块与三个基站的距离转换为 屏幕坐标系
-            tagToStationA0 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA0(),locateInfo.getStationA1ToStationA2(),mWidth);
-            tagToStationA1 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA1(),locateInfo.getStationA1ToStationA2(),mWidth);
-            tagToStationA2 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA2(),locateInfo.getStationA1ToStationA2(),mWidth);
+            tagToStationA0 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA0(),locateInfo.getStationA0ToStationA1(),mWidth);
+            tagToStationA1 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA1(),locateInfo.getStationA0ToStationA1(),mWidth);
+            tagToStationA2 = (float) CoordinateCalculateUtil.realConvertScreen(locateInfo.getTagToStationA2(),locateInfo.getStationA0ToStationA1(),mWidth);
             //利用三边算法，计算出 模块 在手机屏幕坐标系的坐标
-            moduleCoodinate  = CoordinateCalculateUtil.trilateration(baseStation_1_x,baseStation_1_y,tagToStationA1,
-                    baseStation_2_x,baseStation_2_y,tagToStationA2,
-                    baseStation_0_x ,baseStation_0_y ,tagToStationA0);
+            moduleCoodinate  = CoordinateCalculateUtil.trilateration(baseStation_0_x,baseStation_0_y,tagToStationA0,
+                    baseStation_1_x,baseStation_1_y,tagToStationA1,
+                    baseStation_2_x ,baseStation_2_y ,tagToStationA2);
             module_x = moduleCoodinate[0];
             module_y = moduleCoodinate[1];
+            Logger.d("屏幕坐标：  第三个基站坐标  x： "+ baseStation_2_x+"    y: "+ baseStation_2_y+"   模块坐标 x： "+module_x+"   y: "+module_y);
         }
         //根据转换好的坐标，画出来
         isLocate = true;

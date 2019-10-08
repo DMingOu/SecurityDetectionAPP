@@ -78,12 +78,12 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     CommonTitleBar tbLocation;
     @BindView(R.id.iv_background_location)
     ImageView iv_background;
-    @BindView(R.id.view_normal)
+    @BindView(R.id.view_ModuleOnStation)
     ModuleOnStationView marker_normal;
     @BindView(R.id.fab_load_background)
     FloatingActionButton fabLoading;
-    @BindView(R.id.fab_switch)
-    FloatingActionButton fabSwitch;
+    @BindView(R.id.fab_open_location)
+    FloatingActionButton fabOpenLocation;
     @BindView(R.id.fab_loaction_menu)
     FloatingActionMenu fabMenu;
     @BindView(R.id.fab_clearAll)
@@ -98,7 +98,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
 
-    private BaseStation baseStation = new BaseStation(9, 9, 6);
 
 
     @Override
@@ -121,11 +120,11 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
 
     /**
-     * 初始化自定义View 模块可视化View
+     * 初始化自定义View 模块可视化View先隐藏起来
      *
      */
     private void initViews() {
-            marker_normal.setVisibility(View.VISIBLE);
+            marker_normal.setVisibility(View.GONE);
     }
 
     /**
@@ -133,7 +132,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      *
      * @param v 控件
      */
-    @OnClick({R.id.fab_load_background, R.id.fab_switch, R.id.fab_clearAll})
+    @OnClick({R.id.fab_load_background, R.id.fab_open_location, R.id.fab_clearAll})
     void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_load_background:
@@ -143,15 +142,27 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             case R.id.fab_clearAll:
                 Log.e(TAG, "onClick: 清空标记操作 已被废弃" );
                 break;
-            case R.id.fab_switch:
-                if (imageUri == null) {
-                    ToastUtil.showLongToastCenter("当前暂未设置背景图，无法开启定位功能");
-                    break;
+            case R.id.fab_open_location:
+
+                //点击了 开启定位功能后，第二次点击 应该是 关闭定位功能
+                if(getResources().getString(R.string.open_location).equals(fabOpenLocation.getLabelText())) {
+                    //此时按钮文字为 开启定位功能
+                    if (imageUri == null) {
+                        ToastUtil.showLongToastCenter("当前暂未设置背景图，无法开启定位功能");
+                        break;
+                    } else {
+                        //显示 当前的 基站和模块的位置
+                        ToastUtil.showLongToastBottom("正在开启模块定位功能......");
+                        marker_normal.setVisibility(View.VISIBLE);
+                        marker_normal.invalidate();
+                    }
+                    fabOpenLocation.setLabelText(getResources().getString(R.string.close_location));
+
                 } else {
-                    //显示 当前的 基站和模块的位置
-                    ToastUtil.showLongToastBottom("正在开启模块定位功能......");
-                    marker_normal.setVisibility(View.VISIBLE);
-                    marker_normal.invalidate();
+                    //此时按钮文字为 关闭定位功能
+                    ToastUtil.showLongToastBottom("正在关闭模块定位功能......");
+                    marker_normal.setVisibility(View.GONE);
+                    fabOpenLocation.setLabelText(getResources().getString(R.string.open_location));
                 }
                 break;
             default:
@@ -216,12 +227,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         if(marker_normal != null) {
             //为自定义View 设置定位信息数据源
             marker_normal.calculateLocationData(locateInfo);
-//            //自定义View 显示 基站和模块 位置
-//            if(PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
-//                if(marker_normal.getVisibility() != View.VISIBLE) {
-//                    marker_normal.setVisibility(View.VISIBLE);
-//                }
-//            }
         }
     }
 
@@ -236,6 +241,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     protected void lazyLoadData() {
         //每次重新进入此页面才加载的内容
 
+        //加载SharedPrefences里的图片名，加载页面背景
         imageName = SharedPreferencesUtils.getInstance().getString(SharedPreferencesUtils.IMAGENAME, "");
         if (imageUri != null) {
             displayImage(imageUri);

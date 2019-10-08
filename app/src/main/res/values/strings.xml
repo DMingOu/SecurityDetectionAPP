@@ -19,4 +19,7 @@
 
     <string name="known">我已知晓</string>
     <string name="warning">警告</string>
+
+    <string name="open_location">开启定位功能</string>
+    <string name="close_location">关闭定位功能</string>
 </resources>

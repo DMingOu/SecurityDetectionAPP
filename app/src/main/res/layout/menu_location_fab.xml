@@ -22,7 +22,7 @@
         android:visibility="gone"/>
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/fab_switch"
+        android:id="@+id/fab_open_location"
         style="@style/FabMenu.Buttons"
         android:src="@mipmap/switch_edit"
         app:fab_label="开启定位功能"/>
