@@ -180,9 +180,16 @@ public class ModuleOnStationView extends View {
             module_y = moduleCoodinate[1];
             Logger.d("屏幕坐标：  第三个基站坐标  x： "+ baseStation_2_x+"    y: "+ baseStation_2_y+"   模块坐标 x： "+module_x+"   y: "+module_y);
         }
-        //根据转换好的坐标，画出来
-        isLocate = true;
-        invalidate();
+
+        //数据出现较大波动会导致计算出的坐标为 NaN ，避免显示这种错误情况,暂时用这种简单方法规避
+        if(!Float.isNaN(module_x) && ! Float.isNaN(module_y)) {
+            isLocate = true;
+            //根据转换好的坐标，画出来
+            invalidate();
+        } else {
+
+            isLocate = true;
+        }
     }
 
 
