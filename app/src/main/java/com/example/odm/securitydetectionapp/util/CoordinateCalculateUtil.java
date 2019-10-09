@@ -25,9 +25,9 @@ public class CoordinateCalculateUtil {
      * @param screenDistance the screen distance
      * @return the double
      */
-    public static double  realConvertScreen(double x , double realDistance , double screenDistance)  {
-        double screenX = x * (screenDistance / realDistance) ;
-
+    public static double  realConvertScreen(double distance , double realDistance , double screenDistance)  {
+        double screenX = distance * (screenDistance / realDistance) ;
+        Logger.d("折算前的坐标   " + distance +"      折算后的坐标"+screenX + "      float after  "+ (float)screenX);
         return  screenX;
     }
 

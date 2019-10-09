@@ -52,7 +52,7 @@ public class SecurityDetectionAPPLike extends DefaultApplicationLike {
         initCrashPage();
         initGreenDao();
         initLiveEventBus();
-        initWebSocket("ws://192.168.1.138:8888/websocket" , "");
+        initWebSocket("ws://47.102.125.28:8888/websocket" , "");
         initXUIFramework();
         Logger.addLogAdapter(new AndroidLogAdapter());
 
