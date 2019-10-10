@@ -17,29 +17,17 @@ public class locationPresenter extends BasePresenter<locationContract.View>imple
 
     private static final String TAG = "locationPresenter";
     private locationModel mlocationModel;
-    private LocateInfo locateInfo;
 
     public locationPresenter(locationFragment view) {
         super(view);
         mlocationModel = new locationModel();
     }
 
+
     @Override
-    public void handleCallBack(String callbackString) {
-        if ( ! callbackString.startsWith("嵌")) {
-            //收到了模块状态更改(变异常)的数据，去M层解析
-            if(mlocationModel.handleCallBack(callbackString)) {
-                handleCallBackSuccess();
-            }
-        } else {
-            Logger.d("嵌入式设备下线了" + TimeUtil.showCurrentTime(System.currentTimeMillis()));
-        }
-
-    }
-
     public void handleLocationInfo(String data) {
         if(! "".equals(data)) {
-            locateInfo = GsonUtil.GsonToBean(data , LocateInfo.class);
+            LocateInfo locateInfo = GsonUtil.GsonToBean(data, LocateInfo.class);
             if(locateInfo != null) {
                 getView().moduleLocationChanged(locateInfo);
             } else {
@@ -48,10 +36,6 @@ public class locationPresenter extends BasePresenter<locationContract.View>imple
         }
     }
 
-    @Override
-    public void handleCallBackSuccess() {
-        getView().updateAbnormalList();
-    }
 
     @Override
     public boolean saveImage(String imageName) {

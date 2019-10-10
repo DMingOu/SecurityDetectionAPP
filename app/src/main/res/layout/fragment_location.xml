@@ -56,7 +56,7 @@ android:orientation="vertical">
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:textSize="15sp"
-        tools:text="123\n\n\n\n\n\n"
+        tools:text="123\n\n\n\n\n\n666"
         />
     <include
         layout="@layout/menu_location_fab"

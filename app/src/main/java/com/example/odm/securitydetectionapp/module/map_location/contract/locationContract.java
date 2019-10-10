@@ -18,11 +18,12 @@ public interface locationContract {
      */
     interface Model extends IBaseModel {
 
-//        boolean  handleCallBack (String  callbackString);
+
         /**
-         *保存图片
-         * @param imageName
-         * @return
+         * 保存图片
+         *
+         * @param imageName the image name
+         * @return boolean
          */
         boolean  saveImage(String imageName);
 
@@ -33,16 +34,14 @@ public interface locationContract {
      * The interface View.
      */
     interface View  extends IBaseView {
-        /**
-         * Update abnormal list.
-         */
-        void updateAbnormalList();
+
 
         /**
          * 更新定位模块的信息
+         *
          * @param locateInfo 定位模块的信息
          */
-         void moduleLocationChanged(LocateInfo locateInfo) ;
+        void moduleLocationChanged(LocateInfo locateInfo) ;
     }
 
     /**
@@ -50,18 +49,20 @@ public interface locationContract {
      */
     interface Presenter extends IBasePresenter {
 
+
         /**
-         * Handle call back.
+         * 解析定位信息
          *
-         * @param callbackString the callback string
+         * @param data 定位信息字符串(Json)
          */
-        void  handleCallBack (String  callbackString);
+        void handleLocationInfo(String data);
 
         /**
-         * Handle call back success.
+         * 保存图片
+         *
+         * @param imageName 图片全名
+         * @return the boolean
          */
-        void  handleCallBackSuccess();
-
         boolean  saveImage(String imageName);
     }
 }

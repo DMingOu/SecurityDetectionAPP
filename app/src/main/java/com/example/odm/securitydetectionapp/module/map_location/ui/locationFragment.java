@@ -78,7 +78,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @BindView(R.id.iv_background_location)
     ImageView iv_background;
     @BindView(R.id.view_ModuleOnStation)
-    ModuleOnStationView marker_normal;
+    ModuleOnStationView moduleOnStationView;
     @BindView(R.id.fab_load_background)
     FloatingActionButton fabLoading;
     @BindView(R.id.fab_open_location)
@@ -124,7 +124,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      * 初始化自定义View 模块可视化View先隐藏起来
      */
     private void initViews() {
-        marker_normal.setVisibility(View.GONE);
+        moduleOnStationView.setVisibility(View.GONE);
     }
 
     /**
@@ -153,15 +153,17 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                     } else {
                         //显示 当前的 基站和模块的位置
                         ToastUtil.showLongToastBottom("正在开启模块定位功能......");
-                        marker_normal.setVisibility(View.VISIBLE);
-                        marker_normal.invalidate();
+                        tvShowLocationInfo.setVisibility(View.VISIBLE);
+                        moduleOnStationView.setVisibility(View.VISIBLE);
+                        moduleOnStationView.invalidate();
                     }
                     fabOpenLocation.setLabelText(getResources().getString(R.string.close_location));
 
                 } else {
                     //此时按钮文字为 关闭定位功能
                     ToastUtil.showLongToastBottom("正在关闭模块定位功能......");
-                    marker_normal.setVisibility(View.GONE);
+                    moduleOnStationView.setVisibility(View.GONE);
+                    tvShowLocationInfo.setVisibility(View.GONE);
                     fabOpenLocation.setLabelText(getResources().getString(R.string.open_location));
                 }
                 break;
@@ -210,13 +212,16 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                         getPresenter().handleLocationInfo(content);
                     }
                 });
-        //接收到了 嵌入式设备下线 的事件 ，处理它: 弹出离线的通知
+        //接收到了 嵌入式设备下线 的事件 ，处理它: 弹出离线的通知,关闭定位功能的可视化，修改开启定位按钮的标题
         LiveEventBus
                 .get(Constant.OFFLINE, String.class)
                 .observe(this, content -> {
                     if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
                         showOfflineBar();
                     }
+                    moduleOnStationView.setVisibility(View.GONE);
+                    tvShowLocationInfo.setVisibility(View.GONE);
+                    fabOpenLocation.setLabelText(getResources().getString(R.string.open_location));
                 });
 
     }
@@ -224,9 +229,9 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
     @Override
     public void moduleLocationChanged(LocateInfo locateInfo) {
-        if (marker_normal != null) {
+        if (moduleOnStationView != null) {
             //为自定义View 设置定位信息数据源
-            marker_normal.calculateLocationData(locateInfo);
+            moduleOnStationView.calculateLocationData(locateInfo);
             showLocationInfoText(locateInfo);
         }
     }
@@ -355,14 +360,6 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
         }
     }
 
-    /**
-     * 定位信息添加进异常列表后的调用方法
-     * 重绘制页面
-     */
-    @Override
-    public void updateAbnormalList() {
-        marker_normal.invalidate();
-    }
 
     /**
      * 创建File保存图片
