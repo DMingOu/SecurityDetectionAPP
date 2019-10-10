@@ -10,7 +10,7 @@ android {
         applicationId "com.example.odm.securitydetectionapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10
+        versionCode 12
         versionName "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

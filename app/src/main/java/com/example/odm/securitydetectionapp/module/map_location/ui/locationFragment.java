@@ -1,6 +1,7 @@
 package com.example.odm.securitydetectionapp.module.map_location.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,7 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,11 +30,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.example.odm.securitydetectionapp.R;
 import com.example.odm.securitydetectionapp.base.presenter.IBasePresenter;
 import com.example.odm.securitydetectionapp.base.view.BaseFragment;
-import com.example.odm.securitydetectionapp.bean.BaseStation;
 import com.example.odm.securitydetectionapp.bean.LocateInfo;
 import com.example.odm.securitydetectionapp.common.Constant;
 import com.example.odm.securitydetectionapp.core.PageStatusManager;
-import com.example.odm.securitydetectionapp.core.PointManager;
 import com.example.odm.securitydetectionapp.core.eventbus.BaseEvent;
 import com.example.odm.securitydetectionapp.module.map_location.contract.locationContract;
 import com.example.odm.securitydetectionapp.module.map_location.presenter.locationPresenter;
@@ -70,6 +68,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
 
     private static final String TAG = "locationFragment";
+
     @BindView(R.id.loading)
     MKLoader loadingbar;
     @BindView(R.id.rmv_locate)
@@ -88,16 +87,19 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     FloatingActionMenu fabMenu;
     @BindView(R.id.fab_clearAll)
     FloatingActionButton fabClearAll;
+    @BindView(R.id.tv_show_location_info)
+    TextView tvShowLocationInfo;
+
     private static final int REQUEST_CODE_GALLERY = 0x10;           // 图库选取图片标识请求码
     private static final int CROP_PHOTO = 0x12;                     // 裁剪图片标识请求码
     private static final int STORAGE_PERMISSION = 0x20;              // 动态申请存储权限标识
+
     private File imageFile = null;                                  // 声明File对象
     private Uri imageUri = null;                                    // 裁剪后的图片uri
     private String imagePath = "";
     private String imageName = "";
     //控制切换标注模式的变量，true为正在编辑，false为当前不可编辑
     private boolean isEditted;
-
 
 
     @Override
@@ -118,13 +120,11 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     }
 
 
-
     /**
      * 初始化自定义View 模块可视化View先隐藏起来
-     *
      */
     private void initViews() {
-            marker_normal.setVisibility(View.GONE);
+        marker_normal.setVisibility(View.GONE);
     }
 
     /**
@@ -140,12 +140,12 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 selectBackGround();
                 break;
             case R.id.fab_clearAll:
-                Log.e(TAG, "onClick: 清空标记操作 已被废弃" );
+                Log.e(TAG, "onClick: 清空标记操作 已被废弃");
                 break;
             case R.id.fab_open_location:
 
                 //点击了 开启定位功能后，第二次点击 应该是 关闭定位功能
-                if(getResources().getString(R.string.open_location).equals(fabOpenLocation.getLabelText())) {
+                if (getResources().getString(R.string.open_location).equals(fabOpenLocation.getLabelText())) {
                     //此时按钮文字为 开启定位功能
                     if (imageUri == null) {
                         ToastUtil.showLongToastCenter("当前暂未设置背景图，无法开启定位功能");
@@ -201,21 +201,21 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     /**
      * 处理 LiveEvent 事件
      */
-    private void handleLiveEvent(){
+    private void handleLiveEvent() {
         //接收到了 定位信息处理 的事件 ，处理它: 将定位可视化--自定义View
         LiveEventBus
                 .get(Constant.LOCATION, String.class)
                 .observe(this, content -> {
-                        if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
-                            getPresenter().handleLocationInfo(content);
-                        }
+                    if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_LOCATION_CURRENT) {
+                        getPresenter().handleLocationInfo(content);
+                    }
                 });
         //接收到了 嵌入式设备下线 的事件 ，处理它: 弹出离线的通知
         LiveEventBus
                 .get(Constant.OFFLINE, String.class)
                 .observe(this, content -> {
                     if (PageStatusManager.getPageStatus() == PageStatusManager.PAGE_WATCH_CURRENT) {
-                            showOfflineBar();
+                        showOfflineBar();
                     }
                 });
 
@@ -224,12 +224,24 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 
     @Override
     public void moduleLocationChanged(LocateInfo locateInfo) {
-        if(marker_normal != null) {
+        if (marker_normal != null) {
             //为自定义View 设置定位信息数据源
             marker_normal.calculateLocationData(locateInfo);
+            showLocationInfoText(locateInfo);
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private void showLocationInfoText(LocateInfo locateInfo) {
+        if(tvShowLocationInfo != null) {
+            tvShowLocationInfo.setText("基站A0到基站A1的距离:  "+locateInfo.getStationA0ToStationA1()+"\n"
+                                        .concat("基站A1到基站A2的距离:  "+locateInfo.getStationA1ToStationA2()+"\n"
+                                        .concat("基站A0到基站A2的距离:  "+locateInfo.getStationA0ToStationA2()+"\n"
+                                        .concat("模块到基站A0的距离:    "+locateInfo.getTagToStationA0())+"\n"
+                                        .concat("模块到基站A1的距离:    "+locateInfo.getTagToStationA1()+"\n"
+                                        .concat("模块到基站A2的距离:    "+locateInfo.getTagToStationA2() )))));
+        }
+    }
 
 
     @Override
@@ -251,16 +263,16 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
             imageUri = Uri.fromFile(imageFile);
             displayImage(imageUri);
             hideLoading();
-       } else {
+        } else {
             showLoading();
         }
-     }
+    }
 
 
     @Override
     public void showLoading() {
         super.showLoading();
-        if(loadingbar.getVisibility() != View.VISIBLE){
+        if (loadingbar.getVisibility() != View.VISIBLE) {
             loadingbar.setVisibility(View.VISIBLE);
         }
     }
@@ -268,7 +280,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     @Override
     public void hideLoading() {
         super.hideLoading();
-        if(loadingbar.getVisibility() != View.GONE){
+        if (loadingbar.getVisibility() != View.GONE) {
             loadingbar.setVisibility(View.GONE);
         }
     }
@@ -328,7 +340,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 case CROP_PHOTO:
                     // 裁剪图片后的回调
                     try {
-                        if (imageUri != null && ! "".equals(imageName)) {
+                        if (imageUri != null && !"".equals(imageName)) {
                             displayImage(imageUri);
                             hideLoading();
                             saveImage(imageName);
@@ -364,9 +376,9 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
 //                deletePicture(imagePath,getContext());
             }
             // 新建一张图片文件
-            imageName = TimeUtil.transformToString(System.currentTimeMillis())+ "SecurityDetectionAPPBackground.jpg";
+            imageName = TimeUtil.transformToString(System.currentTimeMillis()) + "SecurityDetectionAPPBackground.jpg";
             imageFile = new File(Environment.getExternalStorageDirectory(), imageName);
-            imagePath = "/storage/emulated/0/"+imageName;
+            imagePath = "/storage/emulated/0/" + imageName;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -398,7 +410,7 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
     }
 
     private void saveImage(String imageName) {
-        if(getPresenter().saveImage(imageName)) {
+        if (getPresenter().saveImage(imageName)) {
             Logger.d("存储图片成功");
             ToastUtil.showShortToastBottom("保存图片成功");
         } else {
@@ -457,8 +469,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
      * @param localPath the local path
      * @param context   the context
      */
-    public  void deletePicture(String localPath, Context context) {
-        if(!TextUtils.isEmpty(localPath)){
+    public void deletePicture(String localPath, Context context) {
+        if (!TextUtils.isEmpty(localPath)) {
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             ContentResolver contentResolver = context.getContentResolver();
             String url = MediaStore.Images.Media.DATA + "=?";
@@ -469,8 +481,8 @@ public class locationFragment<P extends IBasePresenter> extends BaseFragment<loc
                 if (file.exists()) {
                     file.delete();
                 }
-                if(!file.exists()) {
-                    Logger.d(imageName+"已经为空");
+                if (!file.exists()) {
+                    Logger.d(imageName + "已经为空");
                 }
             }
         }

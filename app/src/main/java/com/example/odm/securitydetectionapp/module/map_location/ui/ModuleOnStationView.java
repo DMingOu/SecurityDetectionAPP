@@ -119,12 +119,15 @@ public class ModuleOnStationView extends View {
                     //如果让第二个基站默认在屏幕右顶点会被挡住，所以要左平移一点
                     canvas.drawBitmap(bmp_base_station, baseStation_1_x - bmp_base_station.getWidth(), baseStation_1_y, mPaint);
                     canvas.drawBitmap(bmp_base_station, baseStation_2_x - (float) bmp_base_station.getWidth() / 2, baseStation_2_y - (float) bmp_base_station.getHeight() / 2, mPaint);
-                    //将三个基站连线,为了美观，调整了位置
-                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, mPaintLine);
-                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
-                    canvas.drawLine(baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
+//                    //将三个基站连线,为了美观，调整了位置
+//                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, mPaintLine);
+//                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
+//                    canvas.drawLine(baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, baseStation_2_x, baseStation_2_y, mPaintLine);
 
                     //将三个基站与模块连线
+                    canvas.drawLine(baseStation_0_x + (float) bmp_base_station.getWidth() / 2, baseStation_0_y + (float) bmp_base_station.getHeight() / 2, module_x ,module_y,mPaintLine);
+                    canvas.drawLine(baseStation_1_x - (float) bmp_base_station.getWidth() / 2, baseStation_1_y + (float) bmp_base_station.getHeight() / 2, module_x ,module_y,mPaintLine);
+                    canvas.drawLine( baseStation_2_x, baseStation_2_y, module_x ,module_y,mPaintLine);
 
                     //根据模块转换后的坐标画出模块，若当前模块信息为异常，则画出异常的模块样式，否则画出正常样式
                     if (CapModuleInfoManager.getCapInfoList().size() > 0) {
@@ -183,7 +186,7 @@ public class ModuleOnStationView extends View {
 //            Logger.d("屏幕坐标：  第三个基站坐标  x： "+ baseStation_2_x+"    y: "+ baseStation_2_y+"   模块坐标 x： "+module_x+"   y: "+module_y);
 
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            //先计算，再对结果进行折算
+            //先计算，再对结果进行折算的情况：👇
 
             baseStation_0_x = 0;
             baseStation_0_y = 0;
